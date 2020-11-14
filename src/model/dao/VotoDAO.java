@@ -1,8 +1,5 @@
 package model.dao;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -62,5 +59,27 @@ public class VotoDAO {
 		}
 		return result;
 
+	}
+	
+	public Set<Voto> logCandidato(Integer cod){
+		Set<Voto> votos = new HashSet<Voto>();
+		try {
+			conn = ConnectionFactory.getConnection();
+			st = conn.prepareStatement("SELECT * FROM voto WHERE cod_candidato = ?");
+			rs = st.executeQuery();
+			while(rs.next()) {
+				Voto v = new Voto();
+				v.setCandidato(new CandidatoDAO().selectByCod(rs.getInt("cod_candidato")));
+				sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				v.setDataHora(sdf.parse(rs.getString("dataHora")));
+				v.setEleitor(new EleitorDAO().selectByCod(rs.getInt("cod_eleitor")));
+				votos.add(v);
+			}
+		}catch(SQLException e) {
+			throw new DBException(e.getMessage());
+		}catch(ParseException e) {
+			e.printStackTrace();
+		}
+		return votos;
 	}
 }
