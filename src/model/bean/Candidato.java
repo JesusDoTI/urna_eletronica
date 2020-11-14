@@ -3,15 +3,14 @@ package model.bean;
 import java.sql.Blob;
 
 public class Candidato {
-
+	
 	private Integer cod;
 	private String name;
 	private Integer num;
 	private String chapa;
 	private Blob imagem;
-
-	public Candidato() {
-	}
+	
+	public Candidato() {}
 
 	public Candidato(Integer cod, String name, Integer num, String chapa, Blob imagem) {
 		this.cod = cod;
@@ -25,6 +24,10 @@ public class Candidato {
 		return cod;
 	}
 
+	public void setCod(Integer cod) {
+		this.cod = cod;
+	} 
+	
 	public String getName() {
 		return name;
 	}
@@ -56,5 +59,6 @@ public class Candidato {
 	public void setImagem(Blob imagem) {
 		this.imagem = imagem;
 	}
-
+	
+	
 }
