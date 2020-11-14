@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.swing.JOptionPane;
+
 import model.bean.Candidato;
 import model.connection.ConnectionFactory;
 import model.connection.DBException;
@@ -19,13 +21,14 @@ public class CandidatoDAO {
 		try {
 			conn = ConnectionFactory.getConnection();
 			st = conn.prepareStatement(
-					"INSERT INTO candidato (cod,nome,num,chapa,imagem) "
-					+ "VALUES (?,?,?,?,?");
-			st.setInt(1, candidato.getCod());
-			st.setString(2, candidato.getName());
-			st.setInt(3, candidato.getNum());
-			st.setString(4, candidato.getChapa());
-			st.setObject(5, candidato.getImagem());
+					"INSERT INTO candidato (nome,num,chapa,imagem) "
+					+ "VALUES (?,?,?,?)");
+			st.setString(1, candidato.getName());
+			st.setInt(2, candidato.getNum());
+			st.setString(3, candidato.getChapa());
+			st.setObject(4, candidato.getImagem());
+			st.execute(); 
+			JOptionPane.showMessageDialog(null, "success");
 		}catch(SQLException e){
 			throw new DBException(e.getMessage());
 		}

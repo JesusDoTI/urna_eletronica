@@ -17,9 +17,8 @@ public class Eleitor {
 	public Eleitor() {
 	}
 
-	public Eleitor(Integer cod, String nome, Date dataNasc, String telefone, String endereco, String rg, String cpf,
+	public Eleitor(String nome, Date dataNasc, String telefone, String endereco, String rg, String cpf,
 			Integer matricula, Instituicao instituicao) {
-		this.cod = cod;
 		this.nome = nome;
 		this.dataNasc = dataNasc;
 		this.telefone = telefone;

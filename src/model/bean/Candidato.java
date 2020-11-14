@@ -12,8 +12,7 @@ public class Candidato {
 	
 	public Candidato() {}
 
-	public Candidato(Integer cod, String name, Integer num, String chapa, Blob imagem) {
-		this.cod = cod;
+	public Candidato(String name, Integer num, String chapa, Blob imagem) {
 		this.name = name;
 		this.num = num;
 		this.chapa = chapa;
@@ -58,6 +57,12 @@ public class Candidato {
 
 	public void setImagem(Blob imagem) {
 		this.imagem = imagem;
+	}
+
+	@Override
+	public String toString() {
+		return "Candidato [cod=" + cod + ", name=" + name + ", num=" + num + ", chapa=" + chapa + ", imagem=" + imagem
+				+ "]";
 	}
 	
 	

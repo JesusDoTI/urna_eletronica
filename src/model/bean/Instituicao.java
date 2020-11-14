@@ -10,8 +10,7 @@ public class Instituicao {
 	public Instituicao() {
 	}
 
-	public Instituicao(Integer cod, String endereco, String telefone, String campus) {
-		this.cod = cod;
+	public Instituicao(String endereco, String telefone, String campus) {
 		this.endereco = endereco;
 		this.telefone = telefone;
 		this.campus = campus;
@@ -20,7 +19,11 @@ public class Instituicao {
 	public Integer getCod() {
 		return cod;
 	}
-
+	
+	public void setCod(Integer cod) {
+		this.cod = cod;
+	}
+	
 	public String getEndereco() {
 		return endereco;
 	}
