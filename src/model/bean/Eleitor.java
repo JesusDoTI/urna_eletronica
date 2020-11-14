@@ -32,7 +32,11 @@ public class Eleitor {
 	public Integer getCod() {
 		return cod;
 	}
-
+	
+	public void setCod(Integer cod) {
+		this.cod = cod;
+	}
+	
 	public String getNome() {
 		return nome;
 	}
@@ -97,4 +101,12 @@ public class Eleitor {
 		this.instituicao = instituicao;
 	}
 
+	@Override
+	public String toString() {
+		return "Eleitor [cod=" + cod + ", nome=" + nome + ", dataNasc=" + dataNasc + ", telefone=" + telefone
+				+ ", endereco=" + endereco + ", rg=" + rg + ", cpf=" + cpf + ", matricula=" + matricula
+				+ ", instituicao=" + instituicao + "]";
+	}
+	
+	
 }

@@ -14,7 +14,6 @@ import model.connection.DBException;
 
 public class EleitorDAO {
 	
-	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	private static Connection conn = null;
 	private static PreparedStatement st = null;
 	private static ResultSet rs = null;
@@ -38,5 +37,31 @@ public class EleitorDAO {
 		}catch(SQLException e){
 			throw new DBException(e.getMessage());
 		}
+	}
+	
+	public Eleitor selectByRg(String rg) {
+		try{
+			conn = ConnectionFactory.getConnection();
+			st = conn.prepareStatement(
+					"SELECT * FROM eleitor WHERE rg = ?");
+			st.setString(1, rg);
+			rs = st.executeQuery();
+			if(rs.next()) {
+				Eleitor e = new Eleitor();
+				e.setCod(rs.getInt("cod"));
+				e.setNome(rs.getString("nome"));
+				e.setDataNasc(rs.getDate("dataNasc"));
+				e.setTelefone(rs.getString("telefone"));
+				e.setEndereco(rs.getString("endereco"));
+				e.setRg(rg);
+				e.setCpf(rs.getString("cpf"));
+				e.setMatricula(rs.getInt("matricula"));
+				e.setInstituicao(new InstituicaoDAO().select(rs.getInt("instituicao")));
+				return e;
+			}
+		}catch(SQLException e) {
+			throw new DBException(e.getMessage());
+		}
+		return null;
 	}
 }

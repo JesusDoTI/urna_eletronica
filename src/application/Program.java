@@ -25,7 +25,7 @@ public class Program {
 		System.out.println(cDAO.select(12));
 		EleitorDAO eDAO = new EleitorDAO();
 		eDAO.inserir(e);
-
+		System.out.println(eDAO.selectByRg(e.getRg()));
 	}
 
 }
