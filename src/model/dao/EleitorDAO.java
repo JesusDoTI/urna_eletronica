@@ -64,4 +64,30 @@ public class EleitorDAO {
 		}
 		return null;
 	}
+	
+	public Eleitor selectByCod(Integer cod) {
+		try{
+			conn = ConnectionFactory.getConnection();
+			st = conn.prepareStatement(
+					"SELECT * FROM eleitor WHERE cod = ?");
+			st.setInt(1, cod);
+			rs = st.executeQuery();
+			if(rs.next()) {
+				Eleitor e = new Eleitor();
+				e.setCod(cod);
+				e.setNome(rs.getString("nome"));
+				e.setDataNasc(rs.getDate("dataNasc"));
+				e.setTelefone(rs.getString("telefone"));
+				e.setEndereco(rs.getString("endereco"));
+				e.setRg(rs.getString("rg"));
+				e.setCpf(rs.getString("cpf"));
+				e.setMatricula(rs.getInt("matricula"));
+				e.setInstituicao(new InstituicaoDAO().select(rs.getInt("instituicao")));
+				return e;
+			}
+		}catch(SQLException e) {
+			throw new DBException(e.getMessage());
+		}
+		return null;
+	}
 }

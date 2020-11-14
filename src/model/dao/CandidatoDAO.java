@@ -56,5 +56,25 @@ public class CandidatoDAO {
 		return null;
 	}
 	
-	
+	public Candidato selectByCod(Integer cod) {
+		try{
+			conn = ConnectionFactory.getConnection();
+			st = conn.prepareStatement(
+					"SELECT * FROM candidato WHERE cod = ?");
+			st.setInt(1, cod);
+			rs = st.executeQuery();
+			if(rs.next()) {
+				Candidato c = new Candidato();
+				c.setCod(cod);
+				c.setName(rs.getString("nome"));
+				c.setNum(rs.getInt("num"));
+				c.setChapa(rs.getString("chapa"));
+				c.setImagem(rs.getBlob("imagem"));
+				return c;
+			}
+		}catch(SQLException e) {
+			throw new DBException(e.getMessage());
+		}
+		return null;
+	}
 }

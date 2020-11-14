@@ -1,9 +1,12 @@
 package model.bean;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Voto {
 
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+	
 	private Integer cod;
 	private Date dataHora;
 	private Candidato candidato;
@@ -47,4 +50,10 @@ public class Voto {
 		this.eleitor = eleitor;
 	}
 
+	@Override
+	public String toString() {
+		return candidato.getName() + " - " + sdf.format(dataHora) + " - " + eleitor.getNome();
+	}
+	
+	
 }
