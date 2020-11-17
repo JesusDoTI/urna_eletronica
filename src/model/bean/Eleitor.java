@@ -1,7 +1,6 @@
 package model.bean;
 
 import java.util.Date;
-import java.util.Objects;
 
 public class Eleitor implements Comparable<Eleitor> {
 

@@ -14,6 +14,7 @@ import model.connection.DBException;
 
 public class EleitorDAO {
 	
+        private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
 	private static Connection conn = null;
 	private static PreparedStatement st = null;
 	private static ResultSet rs = null;
@@ -25,7 +26,7 @@ public class EleitorDAO {
 					"INSERT INTO eleitor (nome,dataNasc,telefone,endereco,rg,cpf,matricula,instituicao) "
 					+ "VALUES (?,?,?,?,?,?,?,?)");
 			st.setString(1, eleitor.getNome());
-			st.setDate(2, new java.sql.Date(eleitor.getDataNasc().getDate()));
+			st.setDate(2, new java.sql.Date(eleitor.getDataNasc().getTime()));
 			st.setString(3, eleitor.getTelefone());
 			st.setString(4, eleitor.getEndereco());
 			st.setString(5,  eleitor.getRg());

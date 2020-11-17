@@ -5,55 +5,62 @@ import java.util.Date;
 
 public class Voto {
 
-	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-	
-	private Integer cod;
-	private Date dataHora;
-	private Candidato candidato;
-	private Eleitor eleitor;
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-	public Voto() {
-	}
+    private Integer cod;
+    private Date dataHora;
+    private Candidato candidato;
+    private Eleitor eleitor;
 
-	public Voto(Integer cod, Date dataHora, Candidato candidato, Eleitor eleitor) {
-		this.cod = cod;
-		this.dataHora = dataHora;
-		this.candidato = candidato;
-		this.eleitor = eleitor;
-	}
+    public Voto() {
+    }
 
-	public Integer getCod() {
-		return cod;
-	}
+    public Voto(Integer cod, Date dataHora, Candidato candidato, Eleitor eleitor) {
+        this.cod = cod;
+        this.dataHora = dataHora;
+        this.candidato = candidato;
+        this.eleitor = eleitor;
+    }
 
-	public Date getDataHora() {
-		return dataHora;
-	}
+    public Voto(Date dataHora, Candidato candidato, Eleitor eleitor) {
+        this.dataHora = dataHora;
+        this.candidato = candidato;
+        this.eleitor = eleitor;
+    }
+    
+    
+    
+    public Integer getCod() {
+        return cod;
+    }
 
-	public void setDataHora(Date dataHora) {
-		this.dataHora = dataHora;
-	}
+    public Date getDataHora() {
+        return dataHora;
+    }
 
-	public Candidato getCandidato() {
-		return candidato;
-	}
+    public void setDataHora(Date dataHora) {
+        this.dataHora = dataHora;
+    }
 
-	public void setCandidato(Candidato candidato) {
-		this.candidato = candidato;
-	}
+    public Candidato getCandidato() {
+        return candidato;
+    }
 
-	public Eleitor getEleitor() {
-		return eleitor;
-	}
+    public void setCandidato(Candidato candidato) {
+        this.candidato = candidato;
+    }
 
-	public void setEleitor(Eleitor eleitor) {
-		this.eleitor = eleitor;
-	}
+    public Eleitor getEleitor() {
+        return eleitor;
+    }
 
-	@Override
-	public String toString() {
-		return candidato.getName() + " - " + sdf.format(dataHora) + " - " + eleitor.getNome();
-	}
-	
-	
+    public void setEleitor(Eleitor eleitor) {
+        this.eleitor = eleitor;
+    }
+
+    @Override
+    public String toString() {
+        return candidato.getName() + " - " + sdf.format(dataHora) + " - " + eleitor.getNome();
+    }
+
 }
