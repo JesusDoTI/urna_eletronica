@@ -23,13 +23,26 @@ public class VotoDAO {
 	private static PreparedStatement st = null;
 	private static ResultSet rs = null;
 
-	public void inserir(Integer num, String rg) {
+	public void votar(Integer num, String rg) {
 		try {
 			conn = ConnectionFactory.getConnection();
 			st = conn.prepareStatement("INSERT INTO voto (dataHora, cod_candidato, cod_eleitor) VALUES (?,?,?)");
 			st.setString(1, sdf.format(new java.sql.Date(Calendar.getInstance().getTimeInMillis())));
 			st.setInt(2, new CandidatoDAO().select(num).getCod());
 			st.setInt(3, new EleitorDAO().selectByRg(rg).getCod());
+			st.execute();
+			JOptionPane.showMessageDialog(null, "success");
+		} catch (SQLException e) {
+			throw new DBException(e.getMessage());
+		}
+	}
+        
+        public void votarBranco(String rg) {
+		try {
+			conn = ConnectionFactory.getConnection();
+			st = conn.prepareStatement("INSERT INTO voto (dataHora, cod_candidato, cod_eleitor) VALUES (?,null,?)");
+			st.setString(1, sdf.format(new java.sql.Date(Calendar.getInstance().getTimeInMillis())));
+			st.setInt(2, new EleitorDAO().selectByRg(rg).getCod());
 			st.execute();
 			JOptionPane.showMessageDialog(null, "success");
 		} catch (SQLException e) {
