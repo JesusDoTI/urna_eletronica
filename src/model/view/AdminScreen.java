@@ -60,6 +60,11 @@ public class AdminScreen extends javax.swing.JFrame {
         jScrollPane2.setViewportView(listEleitor);
 
         btnAddCandidato.setText("Adicionar");
+        btnAddCandidato.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddCandidatoActionPerformed(evt);
+            }
+        });
 
         btnDelEleitor.setText("Excluir");
 
@@ -121,7 +126,14 @@ public class AdminScreen extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAddCandidatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCandidatoActionPerformed
+    CandidatoScreen cs = new CandidatoScreen();
+    cs.setVisible(true);
+    this.dispose();
+    }//GEN-LAST:event_btnAddCandidatoActionPerformed
 
     /**
      * @param args the command line arguments

@@ -8,11 +8,11 @@ public class Candidato {
 	private String name;
 	private Integer num;
 	private String chapa;
-	private Blob imagem;
+	private Imagem imagem;
 	
 	public Candidato() {}
 
-	public Candidato(String name, Integer num, String chapa, Blob imagem) {
+	public Candidato(String name, Integer num, String chapa, Imagem imagem) {
 		this.name = name;
 		this.num = num;
 		this.chapa = chapa;
@@ -51,11 +51,11 @@ public class Candidato {
 		this.chapa = chapa;
 	}
 
-	public Blob getImagem() {
+	public Imagem getImagem() {
 		return imagem;
 	}
 
-	public void setImagem(Blob imagem) {
+	public void setImagem(Imagem imagem) {
 		this.imagem = imagem;
 	}
 
@@ -64,6 +64,5 @@ public class Candidato {
 		return "Candidato [cod=" + cod + ", name=" + name + ", num=" + num + ", chapa=" + chapa + ", imagem=" + imagem
 				+ "]";
 	}
-	
 	
 }

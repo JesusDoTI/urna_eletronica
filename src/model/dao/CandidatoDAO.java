@@ -17,7 +17,7 @@ public class CandidatoDAO {
 	public static PreparedStatement st = null; 
 	public static ResultSet rs = null;
 	
-	public void insert(Candidato candidato) {
+	public void inserir(Candidato candidato) {
 		try {
 			conn = ConnectionFactory.getConnection();
 			st = conn.prepareStatement(
@@ -26,7 +26,7 @@ public class CandidatoDAO {
 			st.setString(1, candidato.getName());
 			st.setInt(2, candidato.getNum());
 			st.setString(3, candidato.getChapa());
-			st.setObject(4, candidato.getImagem());
+			st.setInt(4, candidato.getImagem().getCod());
 			st.execute(); 
 			JOptionPane.showMessageDialog(null, "success");
 		}catch(SQLException e){
@@ -47,7 +47,7 @@ public class CandidatoDAO {
 				c.setName(rs.getString("nome"));
 				c.setNum(num);
 				c.setChapa(rs.getString("chapa"));
-				c.setImagem(rs.getBlob("imagem"));
+				c.setImagem(new ImagemDAO().buscar(rs.getInt("imagem")));
 				return c;
 			}
 		}catch(SQLException e) {
@@ -69,7 +69,7 @@ public class CandidatoDAO {
 				c.setName(rs.getString("nome"));
 				c.setNum(rs.getInt("num"));
 				c.setChapa(rs.getString("chapa"));
-				c.setImagem(rs.getBlob("imagem"));
+				c.setImagem(new ImagemDAO().buscar(rs.getInt("imagem")));
 				return c;
 			}
 		}catch(SQLException e) {

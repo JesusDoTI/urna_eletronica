@@ -5,17 +5,44 @@
  */
 package model.view;
 
+import model.dao.ImagemDAO;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import model.bean.Candidato;
+import model.bean.Imagem;
+import model.dao.CandidatoDAO;
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import model.connection.DBException;
+
 /**
  *
  * @author Rafael
  */
 public class CandidatoScreen extends javax.swing.JFrame {
 
+    Imagem img = new Imagem();
+    File arquivo;
+    String path;
+    Candidato candidato = new Candidato();
+    CandidatoDAO candidatoDAO = new CandidatoDAO();
+
     /**
      * Creates new form CandidatoScreen
      */
     public CandidatoScreen() {
         initComponents();
+        initComplements();
+    }
+    
+    public void initComplements(){
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -33,30 +60,35 @@ public class CandidatoScreen extends javax.swing.JFrame {
         txtNum = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         txtChapa = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
+        lblImagem = new javax.swing.JLabel();
         btnImagem = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
+        btnCadastrar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        txtNome.setText("jTextField1");
 
         jLabel1.setText("Nome");
 
         jLabel2.setText("Número do Candidato");
 
-        txtNum.setText("jTextField2");
-
         jLabel3.setText("Chapa");
 
-        txtChapa.setText("jTextField3");
-
-        jLabel4.setText("jLabel4");
-
         btnImagem.setText("Selecionar Imagem");
+        btnImagem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImagemActionPerformed(evt);
+            }
+        });
 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/model/icon/if.PNG"))); // NOI18N
+
+        btnCadastrar.setText("Cadastrar");
+        btnCadastrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCadastrarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -64,47 +96,126 @@ public class CandidatoScreen extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jLabel1)
                         .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(txtNum)
                         .addComponent(txtNome))
                     .addComponent(jLabel3)
-                    .addComponent(txtChapa, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(70, 70, 70)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnImagem, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(49, Short.MAX_VALUE))
+                    .addComponent(txtChapa, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                    .addComponent(btnCadastrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(70, 70, 70)
+                        .addComponent(btnImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(15, 15, 15))))
             .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnImagem, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtNum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtNum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtChapa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnImagem)
+                        .addComponent(txtChapa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
+        String nome = txtNome.getText();
+        String chapa = txtChapa.getText();
+
+        if (nome.isEmpty() || chapa.isEmpty() || txtNum.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Preencha os campos em branco", "Erro", JOptionPane.ERROR_MESSAGE);
+        } else {
+            Integer num = Integer.parseInt(txtNum.getText());
+            int cod = inserirImagem();
+            candidato = new Candidato(nome, num, chapa, new ImagemDAO().buscar(cod));
+            candidatoDAO.inserir(candidato);
+        }
+    }//GEN-LAST:event_btnCadastrarActionPerformed
+
+    private void btnImagemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImagemActionPerformed
+        JFileChooser file = new JFileChooser();
+        file.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        file.showSaveDialog(lblImagem);
+        this.arquivo = file.getSelectedFile();
+        path = arquivo.getPath();
+        lblImagem.setIcon(new ImageIcon(arquivo.getAbsolutePath()));
+    }//GEN-LAST:event_btnImagemActionPerformed
+
+    private int inserirImagem() {
+        Integer codImg = 0;
+        try {
+            byte[] convert;
+            convert = convertFileContentToBlob(path);
+            Blob blob = new javax.sql.rowset.serial.SerialBlob(convert);
+            img.setTamanho(this.arquivo.length());
+            img.setTipo(getFileExtension(this.arquivo));
+            img.setImagem(blob);
+            ImagemDAO imgDAO = new ImagemDAO();
+            codImg = imgDAO.inserir(img);
+            
+        } catch (SQLException e) {
+            throw new DBException(e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return codImg;
+    }
+
+    public static byte[] convertFileContentToBlob(String filePath) throws IOException {
+        File file = new File(filePath);
+
+        byte[] fileContent = new byte[(int) file.length()];
+        FileInputStream inputStream = null;
+
+        try {
+            inputStream = new FileInputStream(file);
+            inputStream.read(fileContent);
+        } catch (IOException e) {
+            throw new IOException("Unable to convert file to byte array. " + e.getMessage());
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        }
+        return fileContent;
+    }
+
+    private String getFileExtension(File file) {
+        String extension = file.getName();
+        int lastIndexOf = extension.lastIndexOf(".");
+        if (lastIndexOf == -1) {
+            return "";
+        }
+        return extension.substring(lastIndexOf);
+    }
 
     /**
      * @param args the command line arguments
@@ -142,12 +253,13 @@ public class CandidatoScreen extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCadastrar;
     private javax.swing.JButton btnImagem;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel lblImagem;
     private javax.swing.JTextField txtChapa;
     private javax.swing.JTextField txtNome;
     private javax.swing.JTextField txtNum;
