@@ -50,8 +50,7 @@ public class Instituicao {
 
 	@Override
 	public String toString() {
-		return "Instituicao [cod=" + cod + ", endereco=" + endereco + ", telefone=" + telefone + ", campus=" + campus
-				+ "]";
+		return campus;
 	}
 	
 	
