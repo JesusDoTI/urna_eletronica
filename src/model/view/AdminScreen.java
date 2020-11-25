@@ -176,7 +176,7 @@ public class AdminScreen extends javax.swing.JFrame {
         });
         jScrollPane6.setViewportView(tbEleitor);
 
-        btnVoltar.setForeground(new java.awt.Color(255, 255, 255));
+        btnVoltar.setBackground(new java.awt.Color(255, 255, 255));
         btnVoltar.setText("Voltar");
         btnVoltar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

@@ -10,7 +10,9 @@ import java.awt.Rectangle;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import model.bean.Candidato;
 import model.bean.Eleitor;
+import model.dao.CandidatoDAO;
 import model.dao.EleitorDAO;
 
 /**
@@ -21,7 +23,7 @@ public class MainScreen extends javax.swing.JFrame {
 
     Eleitor eleitor = new Eleitor();
     EleitorDAO eleitorDAO = new EleitorDAO();
-
+    
     public MainScreen() {
         initComponents();
         initComplements();
