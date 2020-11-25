@@ -1,6 +1,7 @@
 package model.dao;
 
 import com.mysql.jdbc.Statement;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,7 +35,7 @@ public class ImagemDAO {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Ocorreu algum erro na inserção da imagem!");
             e.printStackTrace();
-        } 
+        }
         return cod;
     }
 
@@ -59,5 +60,24 @@ public class ImagemDAO {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public InputStream buscarImagem(int codigo) {
+        InputStream is = null;
+        Connection connection = null;
+        try {
+            connection = ConnectionFactory.getConnection();
+            PreparedStatement pstmt = connection.prepareStatement("SELECT imagem FROM imagem "
+                    + "WHERE cod = ?");
+            pstmt.setInt(1, codigo);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                is = rs.getBinaryStream(1);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Ocorreu algum erro na busca da imagem!");
+            e.printStackTrace();
+        }
+        return is;
     }
 }

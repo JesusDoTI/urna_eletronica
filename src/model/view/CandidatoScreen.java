@@ -5,10 +5,12 @@
  */
 package model.view;
 
+import java.awt.Image;
 import model.dao.ImagemDAO;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -30,8 +32,9 @@ public class CandidatoScreen extends javax.swing.JFrame {
     Imagem img = new Imagem();
     File arquivo;
     String path;
-    Candidato candidato = new Candidato();
+    Candidato candidato = null;
     CandidatoDAO candidatoDAO = new CandidatoDAO();
+    ImagemDAO imagemDAO = new ImagemDAO();
 
     /**
      * Creates new form CandidatoScreen
@@ -39,6 +42,28 @@ public class CandidatoScreen extends javax.swing.JFrame {
     public CandidatoScreen() {
         initComponents();
         initComplements();
+    }
+
+    public CandidatoScreen(Candidato candidato) {
+        initComponents();
+        initComplements();
+        preencherCampos(candidato);
+    }
+
+    private void preencherCampos(Candidato candidato) {
+        this.candidato = candidato;
+        txtNome.setText(candidato.getName());
+        txtNum.setText(String.valueOf(candidato.getNum()));
+        txtChapa.setText(candidato.getChapa());
+
+        InputStream is = imagemDAO.buscarImagem(candidato.getImagem().getCod());
+        byte[] imgByte = new byte[(int) candidato.getImagem().getTamanho()];
+        try {
+            is.read(imgByte);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        lblImagem.setIcon(new ImageIcon(imgByte));
     }
 
     public void initComplements() {
@@ -68,6 +93,9 @@ public class CandidatoScreen extends javax.swing.JFrame {
         btnImagem = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setForeground(new java.awt.Color(255, 255, 255));
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/model/icon/if.PNG"))); // NOI18N
@@ -171,16 +199,10 @@ public class CandidatoScreen extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        String nome = txtNome.getText();
-        String chapa = txtChapa.getText();
-
-        if (nome.isEmpty() || chapa.isEmpty() || txtNum.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Preencha os campos em branco", "Erro", JOptionPane.ERROR_MESSAGE);
+        if (candidato == null) {
+            cadastrar();
         } else {
-            Integer num = Integer.parseInt(txtNum.getText());
-            int cod = inserirImagem();
-            candidato = new Candidato(nome, num, chapa, new ImagemDAO().buscar(cod));
-            candidatoDAO.inserir(candidato);
+            atualizar();
         }
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
@@ -194,10 +216,41 @@ public class CandidatoScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_btnImagemActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-    AdminScreen as = new AdminScreen();
-    as.setVisible(true);
-    dispose();
+        AdminScreen as = new AdminScreen();
+        as.setVisible(true);
+        dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void cadastrar() {
+        String nome = txtNome.getText();
+        String chapa = txtChapa.getText();
+
+        if (nome.isEmpty() || chapa.isEmpty() || txtNum.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Preencha os campos em branco", "Erro", JOptionPane.ERROR_MESSAGE);
+        } else {
+            Integer num = Integer.parseInt(txtNum.getText());
+            int cod = inserirImagem();
+            candidato = new Candidato(nome, num, chapa, new ImagemDAO().buscar(cod));
+            candidatoDAO.inserir(candidato);
+        }
+    }
+
+    private void atualizar() {
+        String nome = txtNome.getText();
+        String chapa = txtChapa.getText();
+
+        if (nome.isEmpty() || chapa.isEmpty() || txtNum.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Preencha os campos em branco", "Erro", JOptionPane.ERROR_MESSAGE);
+        } else {
+            Integer num = Integer.parseInt(txtNum.getText());
+            if (arquivo == null) {
+                candidatoDAO.update(new Candidato(nome, num, chapa, new ImagemDAO().buscar(candidato.getImagem().getCod())), candidato.getCod());
+            } else {
+                int cod = inserirImagem();
+                candidatoDAO.update(new Candidato(nome, num, chapa, new ImagemDAO().buscar(cod)), candidato.getCod());
+            }
+        }
+    }
 
     private int inserirImagem() {
         Integer codImg = 0;

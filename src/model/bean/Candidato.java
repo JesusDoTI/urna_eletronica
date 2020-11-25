@@ -3,66 +3,73 @@ package model.bean;
 import java.sql.Blob;
 
 public class Candidato {
-	
-	private Integer cod;
-	private String name;
-	private Integer num;
-	private String chapa;
-	private Imagem imagem;
-	
-	public Candidato() {}
 
-	public Candidato(String name, Integer num, String chapa, Imagem imagem) {
-		this.name = name;
-		this.num = num;
-		this.chapa = chapa;
-		this.imagem = imagem;
-	}
+    private Integer cod;
+    private String name;
+    private Integer num;
+    private String chapa;
+    private Imagem imagem;
 
-	public Integer getCod() {
-		return cod;
-	}
+    public Candidato() {
+    }
 
-	public void setCod(Integer cod) {
-		this.cod = cod;
-	} 
-	
-	public String getName() {
-		return name;
-	}
+    public Candidato(String name, Integer num, String chapa, Imagem imagem) {
+        this.name = name;
+        this.num = num;
+        this.chapa = chapa;
+        this.imagem = imagem;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public Candidato(String name, Integer num, String chapa) {
+        this.name = name;
+        this.num = num;
+        this.chapa = chapa;
+    }
 
-	public Integer getNum() {
-		return num;
-	}
+    public Integer getCod() {
+        return cod;
+    }
 
-	public void setNum(Integer num) {
-		this.num = num;
-	}
+    public void setCod(Integer cod) {
+        this.cod = cod;
+    }
 
-	public String getChapa() {
-		return chapa;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setChapa(String chapa) {
-		this.chapa = chapa;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Imagem getImagem() {
-		return imagem;
-	}
+    public Integer getNum() {
+        return num;
+    }
 
-	public void setImagem(Imagem imagem) {
-		this.imagem = imagem;
-	}
+    public void setNum(Integer num) {
+        this.num = num;
+    }
 
-	@Override
-	public String toString() {
-		return "Candidato [cod=" + cod + ", name=" + name + ", num=" + num + ", chapa=" + chapa + ", imagem=" + imagem
-				+ "]";
-	}
-	
+    public String getChapa() {
+        return chapa;
+    }
+
+    public void setChapa(String chapa) {
+        this.chapa = chapa;
+    }
+
+    public Imagem getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(Imagem imagem) {
+        this.imagem = imagem;
+    }
+
+    @Override
+    public String toString() {
+        return "Candidato [cod=" + cod + ", name=" + name + ", num=" + num + ", chapa=" + chapa + ", imagem=" + imagem
+                + "]";
+    }
+
 }

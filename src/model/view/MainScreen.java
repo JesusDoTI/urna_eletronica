@@ -29,7 +29,6 @@ public class MainScreen extends javax.swing.JFrame {
 
     public void initComplements() {
         this.setLocationRelativeTo(null);
-
     }
 
     /**
@@ -51,6 +50,8 @@ public class MainScreen extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jpMain.setBackground(new java.awt.Color(255, 255, 255));
+        jpMain.setForeground(new java.awt.Color(255, 255, 255));
+        jpMain.setToolTipText("");
 
         lblRg.setText("Insira seu RG");
 
@@ -129,7 +130,7 @@ public class MainScreen extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEnterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnterActionPerformed
-    verificateRg();
+        verificateRg();
 
     }//GEN-LAST:event_btnEnterActionPerformed
 
@@ -149,7 +150,6 @@ public class MainScreen extends javax.swing.JFrame {
             String password = JOptionPane.showInputDialog(null, "Senha", "Admin", JOptionPane.QUESTION_MESSAGE);
             if (password.toUpperCase().equals("admin".toUpperCase())) {
                 AdminScreen adm = new AdminScreen();
-                adm.setSize(this.getWidth(), this.getHeight());
                 adm.setVisible(true);
                 this.dispose();
             } else {

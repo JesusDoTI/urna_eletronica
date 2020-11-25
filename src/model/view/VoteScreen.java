@@ -16,23 +16,23 @@ import model.dao.VotoDAO;
  */
 public class VoteScreen extends javax.swing.JFrame {
 
-    Eleitor eleitor = new Eleitor(); 
-    
+    Eleitor eleitor = new Eleitor();
+
     public VoteScreen(Eleitor eleitor) {
         initComponents();
         initComplements();
         this.eleitor = eleitor;
     }
-    
+
     public VoteScreen() {
-       initComponents();
-       initComplements();
+        initComponents();
+        initComplements();
     }
 
-    public void initComplements(){
+    public void initComplements() {
         this.setLocationRelativeTo(null);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -53,6 +53,8 @@ public class VoteScreen extends javax.swing.JFrame {
         lblImagem = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/model/icon/if.PNG"))); // NOI18N
@@ -140,14 +142,14 @@ public class VoteScreen extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-    MainScreen ms = new MainScreen();
-    ms.setVisible(true);
-    dispose();
+        MainScreen ms = new MainScreen();
+        ms.setVisible(true);
+        dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnBrancoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrancoActionPerformed
-    VotoDAO votoDAO = new VotoDAO();
-    votoDAO.votarBranco(eleitor.getRg());
+        VotoDAO votoDAO = new VotoDAO();
+        votoDAO.votarBranco(eleitor.getRg());
     }//GEN-LAST:event_btnBrancoActionPerformed
 
     private void btnConfirmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmaActionPerformed

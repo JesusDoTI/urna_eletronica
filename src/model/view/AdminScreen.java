@@ -5,11 +5,21 @@
  */
 package model.view;
 
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.bean.Candidato;
+import model.dao.CandidatoDAO;
+
 /**
  *
  * @author Rafael
  */
 public class AdminScreen extends javax.swing.JFrame {
+
+    List<Candidato> candidatos = new CandidatoDAO().listar();
+    CandidatoDAO candidatoDAO = new CandidatoDAO();
+    Candidato candidato = new Candidato();
 
     /**
      * Creates new form AdminScreen
@@ -17,11 +27,22 @@ public class AdminScreen extends javax.swing.JFrame {
     public AdminScreen() {
         initComponents();
         initComplements();
+
+        DefaultTableModel dtm = (DefaultTableModel) tbCandidato.getModel();
+        for (Candidato cndt : candidatos) {
+            dtm.addRow(new Object[]{
+                cndt.getName(),
+                cndt.getNum(),
+                cndt.getChapa()
+
+            });
+        }
     }
-    
-    public void initComplements(){
+
+    public void initComplements() {
         this.setLocationRelativeTo(null);
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -32,9 +53,9 @@ public class AdminScreen extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        listCandidato = new javax.swing.JList<>();
         jLabel3 = new javax.swing.JLabel();
         btnAddCandidato = new javax.swing.JButton();
         btnAlterCandidato = new javax.swing.JButton();
@@ -42,8 +63,11 @@ public class AdminScreen extends javax.swing.JFrame {
         btnAddEleitor = new javax.swing.JButton();
         btnAlterEleitor = new javax.swing.JButton();
         btnDelEleitor = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        listEleitor = new javax.swing.JList<>();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        tbCandidato = new javax.swing.JTable();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        tbEleitor = new javax.swing.JTable();
+        btnVoltar = new javax.swing.JButton();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -56,18 +80,29 @@ public class AdminScreen extends javax.swing.JFrame {
             .addGap(0, 100, Short.MAX_VALUE)
         );
 
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane3.setViewportView(jTable1);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        listCandidato.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "CANDIDATO" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(listCandidato);
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel2.setForeground(new java.awt.Color(255, 255, 255));
 
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/model/icon/if.PNG"))); // NOI18N
 
+        btnAddCandidato.setBackground(new java.awt.Color(255, 255, 255));
         btnAddCandidato.setText("Adicionar");
         btnAddCandidato.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -75,10 +110,23 @@ public class AdminScreen extends javax.swing.JFrame {
             }
         });
 
+        btnAlterCandidato.setBackground(new java.awt.Color(255, 255, 255));
         btnAlterCandidato.setText("Alterar");
+        btnAlterCandidato.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAlterCandidatoActionPerformed(evt);
+            }
+        });
 
+        btnDelCandidato.setBackground(new java.awt.Color(255, 255, 255));
         btnDelCandidato.setText("Excluir");
+        btnDelCandidato.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDelCandidatoActionPerformed(evt);
+            }
+        });
 
+        btnAddEleitor.setBackground(new java.awt.Color(255, 255, 255));
         btnAddEleitor.setText("Adicionar");
         btnAddEleitor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -86,16 +134,55 @@ public class AdminScreen extends javax.swing.JFrame {
             }
         });
 
+        btnAlterEleitor.setBackground(new java.awt.Color(255, 255, 255));
         btnAlterEleitor.setText("Alterar");
 
+        btnDelEleitor.setBackground(new java.awt.Color(255, 255, 255));
         btnDelEleitor.setText("Excluir");
 
-        listEleitor.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "ELEITOR" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
+        tbCandidato.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nome", "Número", "Chapa"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
-        jScrollPane2.setViewportView(listEleitor);
+        jScrollPane5.setViewportView(tbCandidato);
+
+        tbEleitor.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nome", "RG", "Matrícula"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane6.setViewportView(tbEleitor);
+
+        btnVoltar.setForeground(new java.awt.Color(255, 255, 255));
+        btnVoltar.setText("Voltar");
+        btnVoltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVoltarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -104,44 +191,52 @@ public class AdminScreen extends javax.swing.JFrame {
             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnAddCandidato, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAlterCandidato, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAddCandidato, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnDelCandidato, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnAddEleitor, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAlterEleitor, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDelEleitor, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnDelEleitor, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnAlterEleitor, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnVoltar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnAddEleitor, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(56, 56, 56)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnVoltar)
+                .addGap(12, 12, 12)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(btnAddCandidato)
-                                .addGap(5, 5, 5)
-                                .addComponent(btnAlterCandidato)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnDelCandidato))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(btnAddEleitor)
-                                .addGap(5, 5, 5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnAlterEleitor)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnDelEleitor)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2))
+                                .addComponent(btnDelEleitor))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(btnAddCandidato)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnAlterCandidato)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnDelCandidato)))
+                        .addGap(0, 128, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -161,9 +256,9 @@ public class AdminScreen extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddCandidatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCandidatoActionPerformed
-    CandidatoScreen cs = new CandidatoScreen();
-    cs.setVisible(true);
-    this.dispose();
+        CandidatoScreen cs = new CandidatoScreen();
+        cs.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnAddCandidatoActionPerformed
 
     private void btnAddEleitorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddEleitorActionPerformed
@@ -171,6 +266,40 @@ public class AdminScreen extends javax.swing.JFrame {
         es.setVisible(true);
         dispose();
     }//GEN-LAST:event_btnAddEleitorActionPerformed
+
+    private void btnAlterCandidatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterCandidatoActionPerformed
+        DefaultTableModel dtm = (DefaultTableModel) tbCandidato.getModel();
+        candidato = candidatoDAO.select((int) dtm.getValueAt(tbCandidato.getSelectedRow(), 1));
+        CandidatoScreen cs = new CandidatoScreen(candidato);
+        cs.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_btnAlterCandidatoActionPerformed
+
+    private void btnDelCandidatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDelCandidatoActionPerformed
+        DefaultTableModel dtm = (DefaultTableModel) tbCandidato.getModel();
+
+        int resposta = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir?");
+        if (resposta == 0) {
+            if (tbCandidato.getSelectedRow() == -1) {
+
+                JOptionPane.showMessageDialog(null, "Selecione um candidato para ser excluído");
+
+            } else {
+                Object obj = dtm.getValueAt(tbCandidato.getSelectedRow(), 1);
+                int excluir = (int) obj;
+                candidatoDAO.excluir(excluir);
+                dtm.removeRow(tbCandidato.getSelectedRow());
+            }
+        } else {
+
+        }
+    }//GEN-LAST:event_btnDelCandidatoActionPerformed
+
+    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
+        MainScreen ms = new MainScreen();
+        ms.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_btnVoltarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -214,12 +343,15 @@ public class AdminScreen extends javax.swing.JFrame {
     private javax.swing.JButton btnAlterEleitor;
     private javax.swing.JButton btnDelCandidato;
     private javax.swing.JButton btnDelEleitor;
+    private javax.swing.JButton btnVoltar;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JList<String> listCandidato;
-    private javax.swing.JList<String> listEleitor;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tbCandidato;
+    private javax.swing.JTable tbEleitor;
     // End of variables declaration//GEN-END:variables
 }
