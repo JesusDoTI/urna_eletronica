@@ -5,24 +5,31 @@
  */
 package model.view;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.swing.ImageIcon;
+import model.bean.Candidato;
 import model.bean.Eleitor;
+import model.dao.CandidatoDAO;
+import model.dao.ImagemDAO;
 import model.dao.VotoDAO;
 
 /**
  *
  * @author Rafael
  */
-public class VoteScreen extends javax.swing.JFrame {
+public final class VoteScreen extends javax.swing.JFrame {
 
     Eleitor eleitor = new Eleitor();
+    Candidato candidato;
+    CandidatoDAO candidatoDAO = new CandidatoDAO();
+    ImagemDAO imagemDAO = new ImagemDAO();
 
     public VoteScreen(Eleitor eleitor) {
         initComponents();
         initComplements();
         this.eleitor = eleitor;
-        
+
     }
 
     public VoteScreen() {
@@ -60,6 +67,11 @@ public class VoteScreen extends javax.swing.JFrame {
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/model/icon/if.PNG"))); // NOI18N
 
+        txtCandidato.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCandidatoKeyReleased(evt);
+            }
+        });
         jScrollPane1.setViewportView(txtCandidato);
 
         jLabel1.setText("Número do Candidato");
@@ -155,6 +167,21 @@ public class VoteScreen extends javax.swing.JFrame {
         votoDAO.votar(Integer.parseInt(txtCandidato.getText()), eleitor.getRg());
     }//GEN-LAST:event_btnConfirmaActionPerformed
 
+    private void txtCandidatoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCandidatoKeyReleased
+        candidato = candidatoDAO.select(Integer.parseInt(txtCandidato.getText()));
+
+        try {
+            InputStream is = imagemDAO.buscarImagem(candidato.getImagem().getCod());
+            byte[] imgByte = new byte[(int) candidato.getImagem().getTamanho()];
+            is.read(imgByte);
+            lblImagem.setIcon(new ImageIcon(imgByte));
+        } catch (IOException ex) {
+            lblImagem.setIcon(null);
+        } catch (NullPointerException ex) {
+            lblImagem.setIcon(null);
+        }
+    }//GEN-LAST:event_txtCandidatoKeyReleased
+   
     /**
      * @param args the command line arguments
      */
@@ -172,13 +199,17 @@ public class VoteScreen extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(VoteScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VoteScreen.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(VoteScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VoteScreen.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(VoteScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VoteScreen.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(VoteScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VoteScreen.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 

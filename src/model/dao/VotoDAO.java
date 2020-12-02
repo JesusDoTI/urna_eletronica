@@ -6,8 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -31,7 +33,7 @@ public class VotoDAO {
 			st.setInt(2, new CandidatoDAO().select(num).getCod());
 			st.setInt(3, new EleitorDAO().selectByRg(rg).getCod());
 			st.execute();
-			JOptionPane.showMessageDialog(null, "success");
+			JOptionPane.showMessageDialog(null, "Operação concluída com êxito");
 		} catch (SQLException e) {
 			throw new DBException(e.getMessage());
 		}
@@ -44,14 +46,14 @@ public class VotoDAO {
 			st.setString(1, sdf.format(new java.sql.Date(Calendar.getInstance().getTimeInMillis())));
 			st.setInt(2, new EleitorDAO().selectByRg(rg).getCod());
 			st.execute();
-			JOptionPane.showMessageDialog(null, "success");
+			JOptionPane.showMessageDialog(null, "Operação concluída com êxito");
 		} catch (SQLException e) {
 			throw new DBException(e.getMessage());
 		}
 	}
 
-	public Set<Voto> log() {
-		Set<Voto> result = new HashSet<>();
+	public List<Voto> list() {
+            List<Voto> result = new ArrayList<>();
 		
 		try {
 			conn = ConnectionFactory.getConnection();

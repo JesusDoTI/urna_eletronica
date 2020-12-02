@@ -9,7 +9,9 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.bean.Candidato;
+import model.bean.Eleitor;
 import model.dao.CandidatoDAO;
+import model.dao.EleitorDAO;
 
 /**
  *
@@ -18,8 +20,11 @@ import model.dao.CandidatoDAO;
 public class AdminScreen extends javax.swing.JFrame {
 
     List<Candidato> candidatos = new CandidatoDAO().listar();
+    List<Eleitor> eleitores = new EleitorDAO().list();
     CandidatoDAO candidatoDAO = new CandidatoDAO();
     Candidato candidato = new Candidato();
+    Eleitor eleitor;
+    EleitorDAO eleitorDAO = new EleitorDAO();
 
     /**
      * Creates new form AdminScreen
@@ -27,10 +32,18 @@ public class AdminScreen extends javax.swing.JFrame {
     public AdminScreen() {
         initComponents();
         initComplements();
+        createTableCandidato();
+        createTableEleitor();
+    }
 
-        DefaultTableModel dtm = (DefaultTableModel) tbCandidato.getModel();
+    public void initComplements() {
+        this.setLocationRelativeTo(null);
+    }
+
+    private void createTableCandidato() {
+        DefaultTableModel dtmc = (DefaultTableModel) tbCandidato.getModel();
         for (Candidato cndt : candidatos) {
-            dtm.addRow(new Object[]{
+            dtmc.addRow(new Object[]{
                 cndt.getName(),
                 cndt.getNum(),
                 cndt.getChapa()
@@ -39,8 +52,16 @@ public class AdminScreen extends javax.swing.JFrame {
         }
     }
 
-    public void initComplements() {
-        this.setLocationRelativeTo(null);
+    private void createTableEleitor() {
+        DefaultTableModel dtme = (DefaultTableModel) tbEleitor.getModel();
+        for (Eleitor elt : eleitores) {
+            dtme.addRow(new Object[]{
+                elt.getNome(),
+                elt.getRg(),
+                elt.getMatricula()
+
+            });
+        }
     }
 
     /**
@@ -55,6 +76,9 @@ public class AdminScreen extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         btnAddCandidato = new javax.swing.JButton();
@@ -68,6 +92,9 @@ public class AdminScreen extends javax.swing.JFrame {
         jScrollPane6 = new javax.swing.JScrollPane();
         tbEleitor = new javax.swing.JTable();
         btnVoltar = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        btnBack = new javax.swing.JButton();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -92,6 +119,19 @@ public class AdminScreen extends javax.swing.JFrame {
             }
         ));
         jScrollPane3.setViewportView(jTable1);
+
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable2);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -136,9 +176,19 @@ public class AdminScreen extends javax.swing.JFrame {
 
         btnAlterEleitor.setBackground(new java.awt.Color(255, 255, 255));
         btnAlterEleitor.setText("Alterar");
+        btnAlterEleitor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAlterEleitorActionPerformed(evt);
+            }
+        });
 
         btnDelEleitor.setBackground(new java.awt.Color(255, 255, 255));
         btnDelEleitor.setText("Excluir");
+        btnDelEleitor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDelEleitorActionPerformed(evt);
+            }
+        });
 
         tbCandidato.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -156,7 +206,13 @@ public class AdminScreen extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tbCandidato.getTableHeader().setReorderingAllowed(false);
         jScrollPane5.setViewportView(tbCandidato);
+        if (tbCandidato.getColumnModel().getColumnCount() > 0) {
+            tbCandidato.getColumnModel().getColumn(0).setResizable(false);
+            tbCandidato.getColumnModel().getColumn(1).setResizable(false);
+            tbCandidato.getColumnModel().getColumn(2).setResizable(false);
+        }
 
         tbEleitor.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -174,13 +230,30 @@ public class AdminScreen extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tbEleitor.getTableHeader().setReorderingAllowed(false);
         jScrollPane6.setViewportView(tbEleitor);
+        if (tbEleitor.getColumnModel().getColumnCount() > 0) {
+            tbEleitor.getColumnModel().getColumn(0).setResizable(false);
+            tbEleitor.getColumnModel().getColumn(1).setResizable(false);
+            tbEleitor.getColumnModel().getColumn(2).setResizable(false);
+        }
 
         btnVoltar.setBackground(new java.awt.Color(255, 255, 255));
-        btnVoltar.setText("Voltar");
+        btnVoltar.setText("Computar Votos");
         btnVoltar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnVoltarActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("ELEITORES");
+
+        jLabel2.setText("CANDIDATOS");
+
+        btnBack.setText("Voltar");
+        btnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackActionPerformed(evt);
             }
         });
 
@@ -188,56 +261,64 @@ public class AdminScreen extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnAlterCandidato, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAddCandidato, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDelCandidato, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(btnAlterCandidato, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btnAddCandidato, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btnDelCandidato, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnDelEleitor, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnAlterEleitor, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(4, 4, 4)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnVoltar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnAddEleitor, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE))))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(btnAlterEleitor, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                                    .addComponent(btnDelEleitor, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                                    .addComponent(btnAddEleitor, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                                    .addComponent(btnBack, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(jLabel1)))
+                    .addComponent(btnVoltar))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnVoltar)
-                .addGap(12, 12, 12)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(btnAddEleitor)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnAlterEleitor)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnDelEleitor))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(btnAddCandidato)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnAlterCandidato)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnDelCandidato)))
-                        .addGap(0, 128, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(btnAddCandidato)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnAlterCandidato)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDelCandidato))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                            .addComponent(btnAddEleitor)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(btnAlterEleitor)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(btnDelEleitor)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
+                            .addComponent(btnBack))
+                        .addComponent(jScrollPane6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -277,13 +358,10 @@ public class AdminScreen extends javax.swing.JFrame {
 
     private void btnDelCandidatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDelCandidatoActionPerformed
         DefaultTableModel dtm = (DefaultTableModel) tbCandidato.getModel();
-
         int resposta = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir?");
         if (resposta == 0) {
             if (tbCandidato.getSelectedRow() == -1) {
-
                 JOptionPane.showMessageDialog(null, "Selecione um candidato para ser excluído");
-
             } else {
                 Object obj = dtm.getValueAt(tbCandidato.getSelectedRow(), 1);
                 int excluir = (int) obj;
@@ -296,10 +374,40 @@ public class AdminScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_btnDelCandidatoActionPerformed
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
+        AdminComputeVoteScreen acvs = new AdminComputeVoteScreen();
+        acvs.setVisible(true);
+    }//GEN-LAST:event_btnVoltarActionPerformed
+
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
         MainScreen ms = new MainScreen();
         ms.setVisible(true);
         dispose();
-    }//GEN-LAST:event_btnVoltarActionPerformed
+    }//GEN-LAST:event_btnBackActionPerformed
+
+    private void btnAlterEleitorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterEleitorActionPerformed
+        DefaultTableModel dtm = (DefaultTableModel) tbEleitor.getModel();
+        eleitor = eleitorDAO.selectByRg(String.valueOf(dtm.getValueAt(tbEleitor.getSelectedRow(), 1)));
+        EleitorScreen es = new EleitorScreen(eleitor);
+        es.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_btnAlterEleitorActionPerformed
+
+    private void btnDelEleitorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDelEleitorActionPerformed
+        DefaultTableModel dtm = (DefaultTableModel) tbEleitor.getModel();
+        int resposta = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir?");
+        if (resposta == 0) {
+            if (tbEleitor.getSelectedRow() == -1) {
+                JOptionPane.showMessageDialog(null, "Selecione um candidato para ser excluído");
+            } else {
+                Object obj = dtm.getValueAt(tbEleitor.getSelectedRow(), 1);
+                String excluir = String.valueOf(obj);
+                eleitorDAO.delete(excluir);
+                dtm.removeRow(tbEleitor.getSelectedRow());
+            }
+        } else {
+
+        }
+    }//GEN-LAST:event_btnDelEleitorActionPerformed
 
     /**
      * @param args the command line arguments
@@ -312,7 +420,7 @@ public class AdminScreen extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -341,16 +449,22 @@ public class AdminScreen extends javax.swing.JFrame {
     private javax.swing.JButton btnAddEleitor;
     private javax.swing.JButton btnAlterCandidato;
     private javax.swing.JButton btnAlterEleitor;
+    private javax.swing.JButton btnBack;
     private javax.swing.JButton btnDelCandidato;
     private javax.swing.JButton btnDelEleitor;
     private javax.swing.JButton btnVoltar;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
     private javax.swing.JTable tbCandidato;
     private javax.swing.JTable tbEleitor;
     // End of variables declaration//GEN-END:variables

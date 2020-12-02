@@ -68,8 +68,7 @@ public class Candidato {
 
     @Override
     public String toString() {
-        return "Candidato [cod=" + cod + ", name=" + name + ", num=" + num + ", chapa=" + chapa + ", imagem=" + imagem
-                + "]";
+        return name + " " + num;
     }
 
 }

@@ -33,7 +33,7 @@ public class ImagemDAO {
             }
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Ocorreu algum erro na inserção da imagem!");
+            JOptionPane.showMessageDialog(null, "Ocorreu um erro na inserção da imagem");
             e.printStackTrace();
         }
         return cod;
@@ -56,7 +56,7 @@ public class ImagemDAO {
             }
             return img;
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Ocorreu algum erro na busca da imagem!");
+            JOptionPane.showMessageDialog(null, "Ocorreu um erro na busca da imagem");
             e.printStackTrace();
             return null;
         }
@@ -75,7 +75,7 @@ public class ImagemDAO {
                 is = rs.getBinaryStream(1);
             }
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Ocorreu algum erro na busca da imagem!");
+            JOptionPane.showMessageDialog(null, "Ocorreu um erro na busca da imagem");
             e.printStackTrace();
         }
         return is;

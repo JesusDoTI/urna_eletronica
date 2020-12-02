@@ -9,6 +9,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import model.bean.Candidato;
@@ -25,9 +27,9 @@ import model.dao.InstituicaoDAO;
 public class EleitorScreen extends javax.swing.JFrame {
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-    Eleitor eleitor = new Eleitor();
+    Eleitor eleitor = null;
     EleitorDAO eleitorDAO = new EleitorDAO();
-    Instituicao instituicao =  new Instituicao();
+    Instituicao instituicao = new Instituicao();
     InstituicaoDAO instituicaoDAO = new InstituicaoDAO();
 
     /**
@@ -36,17 +38,20 @@ public class EleitorScreen extends javax.swing.JFrame {
     public EleitorScreen() {
         initComponents();
         initComplements();
-        
-        
-        List<Instituicao> campus = instituicaoDAO.listar();
-        DefaultComboBoxModel cmb = (DefaultComboBoxModel) cmbCampus.getModel();
-        for (Instituicao inst : campus) {
-            cmb.addElement(inst);
-        }
+    }
+
+    EleitorScreen(Eleitor eleitor) {
+        initComponents();
+        initComplements();
+        this.eleitor = eleitor;
+        preencherCampos();
+        txtRg.setEnabled(false);
+        txtCpf.setEnabled(false);
     }
 
     public void initComplements() {
         this.setLocationRelativeTo(null);
+        criarComboBox();
     }
 
     /**
@@ -106,6 +111,11 @@ public class EleitorScreen extends javax.swing.JFrame {
                 cmbCampusItemStateChanged(evt);
             }
         });
+        cmbCampus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbCampusActionPerformed(evt);
+            }
+        });
 
         btnConfirmar.setText("Confirmar");
         btnConfirmar.addActionListener(new java.awt.event.ActionListener() {
@@ -115,6 +125,11 @@ public class EleitorScreen extends javax.swing.JFrame {
         });
 
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         jLabel9.setText("Campus*");
 
@@ -230,27 +245,30 @@ public class EleitorScreen extends javax.swing.JFrame {
 
     private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarActionPerformed
         if (verificarCampos() == true) {
-            try {
-                String nome = txtNome.getText();
-                String telefone = txtTelefone.getText();
-                String rg = txtRg.getText();
-                String cpf = txtCpf.getText();
-                String endereco = txtEndereco.getText();
-                Integer matricula = Integer.parseInt(txtMatricula.getText());
-                Date data = sdf.parse(txtData.getText());
-                eleitor = new Eleitor(nome, new java.sql.Date(data.getTime()), telefone, endereco, rg, cpf, matricula, instituicao);
-                eleitorDAO.inserir(eleitor);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            } 
+            if (eleitor == null) {
+                System.out.println("TESTE");
+                cadastrar();
+            } else {
+                alterar();
+            }
         }
     }//GEN-LAST:event_btnConfirmarActionPerformed
 
     private void cmbCampusItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbCampusItemStateChanged
-    Instituicao i = (Instituicao) cmbCampus.getSelectedItem();
-    int cod = i.getCod();
-    instituicao.setCod(cod);
+        Instituicao i = (Instituicao) cmbCampus.getSelectedItem();
+        int cod = i.getCod();
+        instituicao.setCod(cod);
     }//GEN-LAST:event_cmbCampusItemStateChanged
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        AdminScreen as = new AdminScreen();
+        as.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void cmbCampusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbCampusActionPerformed
+    
+    }//GEN-LAST:event_cmbCampusActionPerformed
 
     private boolean verificarCampos() {
         if (txtNome.getText().isEmpty()
@@ -267,6 +285,58 @@ public class EleitorScreen extends javax.swing.JFrame {
         }
     }
 
+    private void cadastrar() {
+        try {
+            String nome = txtNome.getText();
+            String telefone = txtTelefone.getText();
+            String rg = txtRg.getText();
+            String cpf = txtCpf.getText();
+            String endereco = txtEndereco.getText();
+            Integer matricula = Integer.parseInt(txtMatricula.getText());
+            Date data = sdf.parse(txtData.getText());
+            eleitor = new Eleitor(nome, new java.sql.Date(data.getTime()), telefone, endereco, rg, cpf, matricula, instituicao);
+            eleitorDAO.inserir(eleitor);
+            eleitor = null;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void alterar() {
+        try {
+            String nome = txtNome.getText();
+            String telefone = txtTelefone.getText();
+            String endereco = txtEndereco.getText();
+            Integer matricula = Integer.parseInt(txtMatricula.getText());
+            Date data = sdf.parse(txtData.getText());
+            eleitor = new Eleitor(nome, new java.sql.Date(data.getTime()), telefone, endereco, matricula, instituicao);
+            eleitorDAO.update(eleitor, txtRg.getText());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void preencherCampos() {
+        txtNome.setText(eleitor.getNome());
+        txtData.setText(sdf.format(eleitor.getDataNasc()));
+        txtTelefone.setText(eleitor.getTelefone());
+        txtRg.setText(eleitor.getRg());
+        txtCpf.setText(eleitor.getCpf());
+        txtEndereco.setText(eleitor.getEndereco());
+        txtMatricula.setText(String.valueOf(eleitor.getMatricula()));
+
+        DefaultComboBoxModel cmb = criarComboBox();
+        cmb.setSelectedItem(eleitor.getInstituicao());
+    }
+    
+    private DefaultComboBoxModel criarComboBox(){
+        List<Instituicao> campus = instituicaoDAO.listar();
+        DefaultComboBoxModel cmb = (DefaultComboBoxModel) cmbCampus.getModel();
+        for (Instituicao inst : campus) {
+            cmb.addElement(inst);
+        }
+        return cmb;
+    }
     /**
      * @param args the command line arguments
      */
@@ -278,7 +348,7 @@ public class EleitorScreen extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }

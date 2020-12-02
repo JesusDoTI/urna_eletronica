@@ -29,6 +29,15 @@ public class Eleitor implements Comparable<Eleitor> {
         this.instituicao = instituicao;
     }
 
+    public Eleitor(String nome, Date dataNasc, String telefone, String endereco, Integer matricula, Instituicao instituicao) {
+        this.nome = nome;
+        this.dataNasc = dataNasc;
+        this.telefone = telefone;
+        this.endereco = endereco;
+        this.matricula = matricula;
+        this.instituicao = instituicao;
+    }
+
     public Integer getCod() {
         return cod;
     }

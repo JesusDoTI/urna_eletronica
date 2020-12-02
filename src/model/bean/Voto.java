@@ -27,9 +27,7 @@ public class Voto {
         this.candidato = candidato;
         this.eleitor = eleitor;
     }
-    
-    
-    
+
     public Integer getCod() {
         return cod;
     }
@@ -60,7 +58,7 @@ public class Voto {
 
     @Override
     public String toString() {
-        return candidato.getName() + " - " + sdf.format(dataHora) + " - " + eleitor.getNome();
+        return eleitor.getNome() + "(" + eleitor.getRg() + ")" + " - " + sdf.format(dataHora) + " - " + candidato.getName();
     }
 
 }

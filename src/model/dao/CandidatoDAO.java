@@ -30,7 +30,7 @@ public class CandidatoDAO {
             st.setString(3, candidato.getChapa());
             st.setInt(4, candidato.getImagem().getCod());
             st.execute();
-            JOptionPane.showMessageDialog(null, "success");
+            JOptionPane.showMessageDialog(null, "Êxito ao efetuar o cadastro");
         } catch (SQLException e) {
             throw new DBException(e.getMessage());
         }
@@ -111,7 +111,6 @@ public class CandidatoDAO {
                     + "WHERE num = ?");
             st.setInt(1, num);
             st.execute();
-            JOptionPane.showMessageDialog(null, "success");
         } catch (SQLException e) {
             throw new DBException(e.getMessage());
         }
@@ -133,7 +132,7 @@ public class CandidatoDAO {
             st.setInt(4, candidato.getImagem().getCod());
             st.setInt(5, cod);
             st.execute();
-            JOptionPane.showMessageDialog(null, "success");
+            JOptionPane.showMessageDialog(null, "Êxito na alteração");
         } catch (SQLException e) {
             throw new DBException(e.getMessage());
         }
@@ -153,7 +152,7 @@ public class CandidatoDAO {
             st.setString(3, candidato.getChapa());
             st.setInt(4, candidato.getCod());
             st.execute();
-            JOptionPane.showMessageDialog(null, "success");
+            JOptionPane.showMessageDialog(null, "Êxito na alteração");
         } catch (SQLException e) {
             throw new DBException(e.getMessage());
         }
