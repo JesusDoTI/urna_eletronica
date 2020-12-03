@@ -17,10 +17,12 @@ import model.connection.ConnectionFactory;
  * @author Rafael
  */
 public class CounterService {
+    
 
-    public static int count(Integer cod) {
+    public static int countCandidato(Integer cod) {
         Connection connection = null;
         Integer total = 0;
+
         try {
             connection = ConnectionFactory.getConnection();
             PreparedStatement pstmt = connection.prepareStatement(
@@ -31,9 +33,27 @@ public class CounterService {
                 total = rs.getInt("Votos");
             }
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Ocorreu algum erro!");
+            JOptionPane.showMessageDialog(null, "Ocorreu algum erro");
             e.printStackTrace();
         }
         return total;
     }
+
+    public static int total() {
+        Connection connection = null;
+        Integer total = 0;
+        try {
+            connection = ConnectionFactory.getConnection();
+            PreparedStatement pstmt = connection.prepareStatement("SELECT COUNT(*) AS Votos FROM voto");
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                total = rs.getInt("Votos");
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Ocorreu algum erro");
+            e.printStackTrace();
+        }
+        return total;
+    }
+
 }

@@ -21,6 +21,7 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
 import model.connection.DBException;
 
 /**
@@ -63,7 +64,12 @@ public class CandidatoScreen extends javax.swing.JFrame {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        lblImagem.setIcon(new ImageIcon(imgByte));
+        ImageIcon image = new ImageIcon(imgByte);
+        image.setImage(image.getImage().getScaledInstance(lblImagem.getWidth(), lblImagem.getHeight(), Image.SCALE_DEFAULT));
+        lblImagem.setIcon(image);
+        lblImagem.setAlignmentX(NORMAL);
+        lblImagem.setAlignmentY(JLabel.CENTER);
+        lblImagem.setIcon(image);
     }
 
     public void initComplements() {
@@ -204,6 +210,7 @@ public class CandidatoScreen extends javax.swing.JFrame {
         } else {
             atualizar();
         }
+        clean();
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     private void btnImagemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImagemActionPerformed
@@ -212,7 +219,12 @@ public class CandidatoScreen extends javax.swing.JFrame {
         file.showSaveDialog(lblImagem);
         this.arquivo = file.getSelectedFile();
         path = arquivo.getPath();
-        lblImagem.setIcon(new ImageIcon(arquivo.getAbsolutePath()));
+        ImageIcon image = new ImageIcon(arquivo.getAbsolutePath());
+        image.setImage(image.getImage().getScaledInstance(lblImagem.getWidth(), lblImagem.getHeight(), Image.SCALE_DEFAULT));
+        lblImagem.setIcon(image);
+        lblImagem.setAlignmentX(NORMAL);
+        lblImagem.setAlignmentY(JLabel.CENTER);
+        lblImagem.setIcon(image);
     }//GEN-LAST:event_btnImagemActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
@@ -229,9 +241,17 @@ public class CandidatoScreen extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Preencha os campos em branco", "Erro", JOptionPane.ERROR_MESSAGE);
         } else {
             Integer num = Integer.parseInt(txtNum.getText());
-            int cod = inserirImagem();
-            candidato = new Candidato(nome, num, chapa, new ImagemDAO().buscar(cod));
-            candidatoDAO.inserir(candidato);
+            if (arquivo == null) {
+                candidato = new Candidato(nome, num, chapa);
+                candidatoDAO.insertWithoutImage(candidato);
+                candidato = null;
+            } else {
+                int cod = inserirImagem();
+                candidato = new Candidato(nome, num, chapa, new ImagemDAO().buscar(cod));
+                candidatoDAO.inserir(candidato);
+                candidato = null;
+            }
+            
         }
     }
 
@@ -298,6 +318,13 @@ public class CandidatoScreen extends javax.swing.JFrame {
             return "";
         }
         return extension.substring(lastIndexOf);
+    }
+
+    private void clean() {
+        txtNome.setText(null);
+        txtNum.setText(null);
+        txtChapa.setText(null);
+        lblImagem.setIcon(null);
     }
 
     /**

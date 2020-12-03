@@ -21,10 +21,12 @@ import model.services.LogService;
  * @author Rafael
  */
 public class AdminComputeVoteScreen extends javax.swing.JFrame {
-    
+
     Voto voto;
     VotoDAO votoDAO = new VotoDAO();
     CandidatoDAO candidatoDAO = new CandidatoDAO();
+    List<Candidato> candidatos = candidatoDAO.listar();
+
     /**
      * Creates new form NewJFrame
      */
@@ -32,26 +34,22 @@ public class AdminComputeVoteScreen extends javax.swing.JFrame {
         initComponents();
         createTable();
         createList();
+        totalVotes();
         LogService.log(votoDAO.list());
-
     }
 
- 
-    
-    
-    private void createTable(){
-        List<Candidato> candidatos = candidatoDAO.listar();
+    private void createTable() {
         DefaultTableModel dtmc = (DefaultTableModel) tbVotos.getModel();
         for (Candidato cndt : candidatos) {
             dtmc.addRow(new Object[]{
                 cndt.getName(),
-                CounterService.count(cndt.getCod())
+                CounterService.countCandidato(cndt.getCod())
             });
         }
-        
+
     }
-    
-    private void createList(){
+
+    private void createList() {
         List<Voto> votos = votoDAO.list();
         DefaultTableModel dtmc = (DefaultTableModel) tbLista.getModel();
         for (Voto vt : votos) {
@@ -60,9 +58,18 @@ public class AdminComputeVoteScreen extends javax.swing.JFrame {
             });
         }
     }
-    
-    
-    
+
+    private void totalVotes() {
+        int white = 0;
+        List<Voto> votos = votoDAO.list();
+        for(Voto vt : votos){
+            if(vt.getCandidato() == null){
+                white++;
+            }
+        }
+        txtBranco.setText("Votos em Branco: " + white);
+        txtTotal.setText("Votos Totais: " + String.valueOf(CounterService.total()));
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -75,10 +82,14 @@ public class AdminComputeVoteScreen extends javax.swing.JFrame {
 
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jTextField1 = new javax.swing.JTextField();
+        jTextField2 = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
         tbLista = new javax.swing.JTable();
         jScrollPane4 = new javax.swing.JScrollPane();
         tbVotos = new javax.swing.JTable();
+        txtBranco = new javax.swing.JTextField();
+        txtTotal = new javax.swing.JTextField();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -93,6 +104,10 @@ public class AdminComputeVoteScreen extends javax.swing.JFrame {
         ));
         jScrollPane2.setViewportView(jTable1);
 
+        jTextField1.setText("jTextField1");
+
+        jTextField2.setText("jTextField2");
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         tbLista.setModel(new javax.swing.table.DefaultTableModel(
@@ -100,7 +115,7 @@ public class AdminComputeVoteScreen extends javax.swing.JFrame {
 
             },
             new String [] {
-                ""
+                "Registro"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -146,7 +161,10 @@ public class AdminComputeVoteScreen extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
+                    .addComponent(txtBranco)
+                    .addComponent(txtTotal))
                 .addContainerGap())
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
@@ -157,14 +175,18 @@ public class AdminComputeVoteScreen extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(110, Short.MAX_VALUE)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(113, Short.MAX_VALUE)
+                .addComponent(txtBranco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(184, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+                    .addGap(284, 284, 284)))
         );
 
         pack();
@@ -211,7 +233,11 @@ public class AdminComputeVoteScreen extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
     private javax.swing.JTable tbLista;
     private javax.swing.JTable tbVotos;
+    private javax.swing.JTextField txtBranco;
+    private javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 }

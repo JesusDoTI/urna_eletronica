@@ -31,7 +31,6 @@ public class ImagemDAO {
             if (rs.next()) {
                 cod = rs.getInt(1);
             }
-
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Ocorreu um erro na inserção da imagem");
             e.printStackTrace();

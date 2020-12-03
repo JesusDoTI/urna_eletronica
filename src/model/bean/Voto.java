@@ -58,7 +58,10 @@ public class Voto {
 
     @Override
     public String toString() {
-        return eleitor.getNome() + "(" + eleitor.getRg() + ")" + " - " + sdf.format(dataHora) + " - " + candidato.getName();
+        if (candidato == null){
+            return eleitor.getNome() + "(" + eleitor.getRg() + ")" + " - " + sdf.format(dataHora) + " - Branco";
+        }
+            return eleitor.getNome() + "(" + eleitor.getRg() + ")" + " - " + sdf.format(dataHora) + " - " + candidato.toString();
     }
 
 }

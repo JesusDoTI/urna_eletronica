@@ -70,5 +70,4 @@ public class Candidato {
     public String toString() {
         return name + " " + num;
     }
-
 }

@@ -23,7 +23,7 @@ public class MainScreen extends javax.swing.JFrame {
 
     Eleitor eleitor = new Eleitor();
     EleitorDAO eleitorDAO = new EleitorDAO();
-    
+
     public MainScreen() {
         initComponents();
         initComplements();
@@ -74,9 +74,9 @@ public class MainScreen extends javax.swing.JFrame {
             }
         });
 
-        txtRg.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtRgActionPerformed(evt);
+        txtRg.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtRgKeyTyped(evt);
             }
         });
 
@@ -133,18 +133,18 @@ public class MainScreen extends javax.swing.JFrame {
 
     private void btnEnterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnterActionPerformed
         verificateRg();
-
     }//GEN-LAST:event_btnEnterActionPerformed
 
     private void btnAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdminActionPerformed
-
         verificateAdmin();
-
     }//GEN-LAST:event_btnAdminActionPerformed
 
-    private void txtRgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtRgActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtRgActionPerformed
+    private void txtRgKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRgKeyTyped
+        String caracteres = "0987654321";
+        if (!caracteres.contains(evt.getKeyChar() + "")) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtRgKeyTyped
 
     private void verificateAdmin() {
         String login = JOptionPane.showInputDialog(null, "Login", "Admin Options", JOptionPane.QUESTION_MESSAGE);

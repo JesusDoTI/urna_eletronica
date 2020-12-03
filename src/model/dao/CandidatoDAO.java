@@ -32,10 +32,28 @@ public class CandidatoDAO {
             st.execute();
             JOptionPane.showMessageDialog(null, "Êxito ao efetuar o cadastro");
         } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Número de Candidato existente", "Erro", JOptionPane.ERROR_MESSAGE);
             throw new DBException(e.getMessage());
         }
     }
-
+    
+    public void insertWithoutImage(Candidato candidato) {
+        try {
+            conn = ConnectionFactory.getConnection();
+            st = conn.prepareStatement(
+                    "INSERT INTO candidato (nome,num,chapa) "
+                    + "VALUES (?,?,?)");
+            st.setString(1, candidato.getName());
+            st.setInt(2, candidato.getNum());
+            st.setString(3, candidato.getChapa());
+            st.execute();
+            JOptionPane.showMessageDialog(null, "Êxito ao efetuar o cadastro");
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Número de Candidato existente", "Erro", JOptionPane.ERROR_MESSAGE);
+            throw new DBException(e.getMessage());
+        }
+    }
+    
     public Candidato select(Integer num) {
         try {
             conn = ConnectionFactory.getConnection();

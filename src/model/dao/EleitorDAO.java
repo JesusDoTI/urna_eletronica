@@ -39,7 +39,7 @@ public class EleitorDAO {
             st.execute();
             JOptionPane.showMessageDialog(null, "Êxito ao efetuar cadastro");
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "RG ou CPF inválidos", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "RG e/ou CPF inválidos", "Erro", JOptionPane.ERROR_MESSAGE);
             throw new DBException(e.getMessage());
         }
     }
@@ -118,7 +118,7 @@ public class EleitorDAO {
             st.execute();
             JOptionPane.showMessageDialog(null, "Êxito na alteração");
         } catch (SQLException e) {
-           JOptionPane.showMessageDialog(null, "RG ou CPF inválidos", "Erro", JOptionPane.ERROR_MESSAGE);
+           JOptionPane.showMessageDialog(null, "RG e/ou CPF inválidos", "Erro", JOptionPane.ERROR_MESSAGE);
            throw new DBException(e.getMessage());
          
         }

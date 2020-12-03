@@ -20,82 +20,84 @@ import model.connection.DBException;
 
 public class VotoDAO {
 
-	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-	private static Connection conn = null;
-	private static PreparedStatement st = null;
-	private static ResultSet rs = null;
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    private static Connection conn = null;
+    private static PreparedStatement st = null;
+    private static ResultSet rs = null;
 
-	public void votar(Integer num, String rg) {
-		try {
-			conn = ConnectionFactory.getConnection();
-			st = conn.prepareStatement("INSERT INTO voto (dataHora, cod_candidato, cod_eleitor) VALUES (?,?,?)");
-			st.setString(1, sdf.format(new java.sql.Date(Calendar.getInstance().getTimeInMillis())));
-			st.setInt(2, new CandidatoDAO().select(num).getCod());
-			st.setInt(3, new EleitorDAO().selectByRg(rg).getCod());
-			st.execute();
-			JOptionPane.showMessageDialog(null, "Operação concluída com êxito");
-		} catch (SQLException e) {
-			throw new DBException(e.getMessage());
-		}
-	}
-        
-        public void votarBranco(String rg) {
-		try {
-			conn = ConnectionFactory.getConnection();
-			st = conn.prepareStatement("INSERT INTO voto (dataHora, cod_candidato, cod_eleitor) VALUES (?,null,?)");
-			st.setString(1, sdf.format(new java.sql.Date(Calendar.getInstance().getTimeInMillis())));
-			st.setInt(2, new EleitorDAO().selectByRg(rg).getCod());
-			st.execute();
-			JOptionPane.showMessageDialog(null, "Operação concluída com êxito");
-		} catch (SQLException e) {
-			throw new DBException(e.getMessage());
-		}
-	}
+    public void votar(Integer num, String rg) {
+        try {
+            conn = ConnectionFactory.getConnection();
+            st = conn.prepareStatement("INSERT INTO voto (dataHora, cod_candidato, cod_eleitor) VALUES (?,?,?)");
+            st.setString(1, sdf.format(new java.sql.Date(Calendar.getInstance().getTimeInMillis())));
+            st.setInt(2, new CandidatoDAO().select(num).getCod());
+            st.setInt(3, new EleitorDAO().selectByRg(rg).getCod());
+            st.execute();
+            JOptionPane.showMessageDialog(null, "Operação concluída com êxito");
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Número de Candidato inexistente", "Erro", JOptionPane.ERROR_MESSAGE);
+            throw new DBException(e.getMessage());
+        }
+    }
 
-	public List<Voto> list() {
-            List<Voto> result = new ArrayList<>();
-		
-		try {
-			conn = ConnectionFactory.getConnection();
-			st = conn.prepareStatement("SELECT * FROM voto");
-			rs = st.executeQuery();
-			while (rs.next()) {
-				Voto v = new Voto();
-				v.setCandidato(new CandidatoDAO().selectByCod(rs.getInt("cod_candidato")));
-				v.setEleitor(new EleitorDAO().selectByCod(rs.getInt("cod_eleitor")));
-				sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				v.setDataHora(sdf.parse(rs.getString("dataHora")));
-				result.add(v);
-			}
-		} catch (SQLException e) {
-			throw new DBException(e.getMessage());
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return result;
+    public void votarBranco(String rg) {
+        try {
+            conn = ConnectionFactory.getConnection();
+            st = conn.prepareStatement("INSERT INTO voto (dataHora, cod_eleitor) VALUES (?,?)");
+            st.setString(1, sdf.format(new java.sql.Date(Calendar.getInstance().getTimeInMillis())));
+            st.setInt(2, new EleitorDAO().selectByRg(rg).getCod());
+            st.execute();
+            JOptionPane.showMessageDialog(null, "Operação concluída com êxito");
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Erro Inesperado", "Erro", JOptionPane.ERROR_MESSAGE);
+            throw new DBException(e.getMessage());
+        }
+    }
 
-	}
-	
-	public Set<Voto> logCandidato(Integer cod){
-		Set<Voto> votos = new HashSet<Voto>();
-		try {
-			conn = ConnectionFactory.getConnection();
-			st = conn.prepareStatement("SELECT * FROM voto WHERE cod_candidato = ?");
-			rs = st.executeQuery();
-			while(rs.next()) {
-				Voto v = new Voto();
-				v.setCandidato(new CandidatoDAO().selectByCod(rs.getInt("cod_candidato")));
-				sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				v.setDataHora(sdf.parse(rs.getString("dataHora")));
-				v.setEleitor(new EleitorDAO().selectByCod(rs.getInt("cod_eleitor")));
-				votos.add(v);
-			}
-		}catch(SQLException e) {
-			throw new DBException(e.getMessage());
-		}catch(ParseException e) {
-			e.printStackTrace();
-		}
-		return votos;
-	}
-        
+    public List<Voto> list() {
+        List<Voto> result = new ArrayList<>();
+
+        try {
+            conn = ConnectionFactory.getConnection();
+            st = conn.prepareStatement("SELECT * FROM voto");
+            rs = st.executeQuery();
+            while (rs.next()) {
+                Voto v = new Voto();
+                v.setCandidato(new CandidatoDAO().selectByCod(rs.getInt("cod_candidato")));
+                v.setEleitor(new EleitorDAO().selectByCod(rs.getInt("cod_eleitor")));
+                sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                v.setDataHora(sdf.parse(rs.getString("dataHora")));
+                result.add(v);
+            }
+        } catch (SQLException e) {
+            throw new DBException(e.getMessage());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
+
+    public Set<Voto> logCandidato(Integer cod) {
+        Set<Voto> votos = new HashSet<Voto>();
+        try {
+            conn = ConnectionFactory.getConnection();
+            st = conn.prepareStatement("SELECT * FROM voto WHERE cod_candidato = ?");
+            rs = st.executeQuery();
+            while (rs.next()) {
+                Voto v = new Voto();
+                v.setCandidato(new CandidatoDAO().selectByCod(rs.getInt("cod_candidato")));
+                sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                v.setDataHora(sdf.parse(rs.getString("dataHora")));
+                v.setEleitor(new EleitorDAO().selectByCod(rs.getInt("cod_eleitor")));
+                votos.add(v);
+            }
+        } catch (SQLException e) {
+            throw new DBException(e.getMessage());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return votos;
+    }
+
 }
