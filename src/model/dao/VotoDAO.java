@@ -8,50 +8,46 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.JOptionPane;
+import model.bean.Eleitor;
 
 import model.bean.Voto;
 import model.connection.ConnectionFactory;
-import model.connection.DBException;
 
 public class VotoDAO {
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     private static Connection conn = null;
-    private static PreparedStatement st = null;
+    private static PreparedStatement pstmt = null;
     private static ResultSet rs = null;
 
-    public void votar(Integer num, String rg) {
+    public void vote(Integer num, String cpf) {
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement("INSERT INTO voto (dataHora, cod_candidato, cod_eleitor) VALUES (?,?,?)");
-            st.setString(1, sdf.format(new java.sql.Date(Calendar.getInstance().getTimeInMillis())));
-            st.setInt(2, new CandidatoDAO().select(num).getCod());
-            st.setInt(3, new EleitorDAO().selectByRg(rg).getCod());
-            st.execute();
+            pstmt = conn.prepareStatement("INSERT INTO voto (dataHora, cod_candidato, cod_eleitor) VALUES (?,?,?)");
+            pstmt.setString(1, sdf.format(new java.sql.Date(Calendar.getInstance().getTimeInMillis())));
+            pstmt.setInt(2, new CandidatoDAO().select(num).getCod());
+            pstmt.setInt(3, new EleitorDAO().selectByCpf(cpf).getCod());
+            pstmt.execute();
             JOptionPane.showMessageDialog(null, "Operação concluída com êxito");
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Número de Candidato inexistente", "Erro", JOptionPane.ERROR_MESSAGE);
-            throw new DBException(e.getMessage());
-        }
+        } 
     }
 
-    public void votarBranco(String rg) {
+    public void whiteVote(String cpf) {
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement("INSERT INTO voto (dataHora, cod_eleitor) VALUES (?,?)");
-            st.setString(1, sdf.format(new java.sql.Date(Calendar.getInstance().getTimeInMillis())));
-            st.setInt(2, new EleitorDAO().selectByRg(rg).getCod());
-            st.execute();
+            pstmt = conn.prepareStatement("INSERT INTO voto (dataHora, cod_eleitor) VALUES (?,?)");
+            pstmt.setString(1, sdf.format(new java.sql.Date(Calendar.getInstance().getTimeInMillis())));
+            pstmt.setInt(2, new EleitorDAO().selectByCpf(cpf).getCod());
+            pstmt.execute();
             JOptionPane.showMessageDialog(null, "Operação concluída com êxito");
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Erro Inesperado", "Erro", JOptionPane.ERROR_MESSAGE);
-            throw new DBException(e.getMessage());
-        }
+        } 
     }
 
     public List<Voto> list() {
@@ -59,8 +55,8 @@ public class VotoDAO {
 
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement("SELECT * FROM voto");
-            rs = st.executeQuery();
+            pstmt = conn.prepareStatement("SELECT * FROM voto");
+            rs = pstmt.executeQuery();
             while (rs.next()) {
                 Voto v = new Voto();
                 v.setCandidato(new CandidatoDAO().selectByCod(rs.getInt("cod_candidato")));
@@ -69,35 +65,27 @@ public class VotoDAO {
                 v.setDataHora(sdf.parse(rs.getString("dataHora")));
                 result.add(v);
             }
-        } catch (SQLException e) {
-            throw new DBException(e.getMessage());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        } catch (SQLException | ParseException e) {
+            JOptionPane.showMessageDialog(null, "Erro inesperado", "Erro", JOptionPane.ERROR_MESSAGE);
+        } 
         return result;
 
     }
 
-    public Set<Voto> logCandidato(Integer cod) {
-        Set<Voto> votos = new HashSet<Voto>();
+    public boolean select(Eleitor eleitor) {
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement("SELECT * FROM voto WHERE cod_candidato = ?");
-            rs = st.executeQuery();
-            while (rs.next()) {
-                Voto v = new Voto();
-                v.setCandidato(new CandidatoDAO().selectByCod(rs.getInt("cod_candidato")));
-                sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                v.setDataHora(sdf.parse(rs.getString("dataHora")));
-                v.setEleitor(new EleitorDAO().selectByCod(rs.getInt("cod_eleitor")));
-                votos.add(v);
+            pstmt = conn.prepareStatement(
+                    "SELECT * FROM voto WHERE cod_eleitor = ?");
+            pstmt.setInt(1, eleitor.getCod());
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return true;
             }
         } catch (SQLException e) {
-            throw new DBException(e.getMessage());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return votos;
+            JOptionPane.showMessageDialog(null, "Erro inesperado", "Erro", JOptionPane.ERROR_MESSAGE);
+        } 
+        return false;
     }
 
 }

@@ -19,8 +19,6 @@ import model.bean.Imagem;
 import model.dao.CandidatoDAO;
 import java.sql.Blob;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JLabel;
 import model.connection.DBException;
 
@@ -31,6 +29,7 @@ import model.connection.DBException;
 public class CandidatoScreen extends javax.swing.JFrame {
 
     Imagem img = new Imagem();
+    ImageIcon image = null;
     File arquivo;
     String path;
     Candidato candidato = null;
@@ -49,6 +48,7 @@ public class CandidatoScreen extends javax.swing.JFrame {
         initComponents();
         initComplements();
         preencherCampos(candidato);
+        preencherImagem(candidato);
     }
 
     private void preencherCampos(Candidato candidato) {
@@ -57,19 +57,24 @@ public class CandidatoScreen extends javax.swing.JFrame {
         txtNum.setText(String.valueOf(candidato.getNum()));
         txtChapa.setText(candidato.getChapa());
 
-        InputStream is = imagemDAO.buscarImagem(candidato.getImagem().getCod());
-        byte[] imgByte = new byte[(int) candidato.getImagem().getTamanho()];
-        try {
-            is.read(imgByte);
-        } catch (IOException ex) {
-            ex.printStackTrace();
+    }
+
+    private void preencherImagem(Candidato candidato) {
+        InputStream is = imagemDAO.selectImage(candidato.getImage().getCod());
+        if (is != null) {
+            byte[] imgByte = new byte[(int) candidato.getImage().getSize()];
+            try {
+                is.read(imgByte);
+                image = new ImageIcon(imgByte);
+                image.setImage(image.getImage().getScaledInstance(lblImagem.getWidth(), lblImagem.getHeight(), Image.SCALE_DEFAULT));
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
-        ImageIcon image = new ImageIcon(imgByte);
-        image.setImage(image.getImage().getScaledInstance(lblImagem.getWidth(), lblImagem.getHeight(), Image.SCALE_DEFAULT));
         lblImagem.setIcon(image);
         lblImagem.setAlignmentX(NORMAL);
         lblImagem.setAlignmentY(JLabel.CENTER);
-        lblImagem.setIcon(image);
     }
 
     public void initComplements() {
@@ -207,10 +212,11 @@ public class CandidatoScreen extends javax.swing.JFrame {
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
         if (candidato == null) {
             cadastrar();
+            
         } else {
             atualizar();
-        }
-        clean();
+            
+        }  
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     private void btnImagemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImagemActionPerformed
@@ -219,7 +225,7 @@ public class CandidatoScreen extends javax.swing.JFrame {
         file.showSaveDialog(lblImagem);
         this.arquivo = file.getSelectedFile();
         path = arquivo.getPath();
-        ImageIcon image = new ImageIcon(arquivo.getAbsolutePath());
+        image = new ImageIcon(arquivo.getAbsolutePath());
         image.setImage(image.getImage().getScaledInstance(lblImagem.getWidth(), lblImagem.getHeight(), Image.SCALE_DEFAULT));
         lblImagem.setIcon(image);
         lblImagem.setAlignmentX(NORMAL);
@@ -241,17 +247,17 @@ public class CandidatoScreen extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Preencha os campos em branco", "Erro", JOptionPane.ERROR_MESSAGE);
         } else {
             Integer num = Integer.parseInt(txtNum.getText());
-            if (arquivo == null) {
+            if (image == null || arquivo == null) {
                 candidato = new Candidato(nome, num, chapa);
                 candidatoDAO.insertWithoutImage(candidato);
                 candidato = null;
             } else {
                 int cod = inserirImagem();
-                candidato = new Candidato(nome, num, chapa, new ImagemDAO().buscar(cod));
-                candidatoDAO.inserir(candidato);
+                candidato = new Candidato(nome, num, chapa, new ImagemDAO().select(cod));
+                candidatoDAO.insert(candidato);
                 candidato = null;
             }
-            
+            clean();
         }
     }
 
@@ -263,12 +269,13 @@ public class CandidatoScreen extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Preencha os campos em branco", "Erro", JOptionPane.ERROR_MESSAGE);
         } else {
             Integer num = Integer.parseInt(txtNum.getText());
-            if (arquivo == null) {
-                candidatoDAO.update(new Candidato(nome, num, chapa, new ImagemDAO().buscar(candidato.getImagem().getCod())), candidato.getCod());
+            if (image == null || arquivo == null) {
+                candidatoDAO.updateWithoutImage(new Candidato(nome, num, chapa), candidato.getCod());
             } else {
                 int cod = inserirImagem();
-                candidatoDAO.update(new Candidato(nome, num, chapa, new ImagemDAO().buscar(cod)), candidato.getCod());
+                candidatoDAO.update(new Candidato(nome, num, chapa, new ImagemDAO().select(cod)), candidato.getCod());
             }
+            clean();
         }
     }
 
@@ -278,11 +285,11 @@ public class CandidatoScreen extends javax.swing.JFrame {
             byte[] convert;
             convert = convertFileContentToBlob(path);
             Blob blob = new javax.sql.rowset.serial.SerialBlob(convert);
-            img.setTamanho(this.arquivo.length());
-            img.setTipo(getFileExtension(this.arquivo));
-            img.setImagem(blob);
+            img.setSize(this.arquivo.length());
+            img.setExtension(getFileExtension(this.arquivo));
+            img.setImage(blob);
             ImagemDAO imgDAO = new ImagemDAO();
-            codImg = imgDAO.inserir(img);
+            codImg = imgDAO.insert(img);
 
         } catch (SQLException e) {
             throw new DBException(e.getMessage());
@@ -296,17 +303,10 @@ public class CandidatoScreen extends javax.swing.JFrame {
         File file = new File(filePath);
 
         byte[] fileContent = new byte[(int) file.length()];
-        FileInputStream inputStream = null;
-
-        try {
-            inputStream = new FileInputStream(file);
+        try (FileInputStream inputStream = new FileInputStream(file)) {
             inputStream.read(fileContent);
         } catch (IOException e) {
             throw new IOException("Unable to convert file to byte array. " + e.getMessage());
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
         }
         return fileContent;
     }

@@ -59,7 +59,7 @@
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="lblRg" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="btnEnter" pref="172" max="32767" attributes="0"/>
-                              <Component id="txtRg" alignment="0" max="32767" attributes="0"/>
+                              <Component id="txtCpf" alignment="0" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="151" max="-2" attributes="0"/>
                       </Group>
@@ -78,7 +78,7 @@
                   <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
                   <Component id="lblRg" min="-2" pref="30" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="txtRg" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtCpf" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="btnEnter" min="-2" max="-2" attributes="0"/>
                   <EmptySpace pref="39" max="32767" attributes="0"/>
@@ -91,7 +91,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="lblRg">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Insira seu RG"/>
+            <Property name="text" type="java.lang.String" value="Insira seu CPF"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="btnEnter">
@@ -120,9 +120,9 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAdminActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JPasswordField" name="txtRg">
+        <Component class="javax.swing.JPasswordField" name="txtCpf">
           <Events>
-            <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtRgKeyTyped"/>
+            <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtCpfKeyTyped"/>
           </Events>
         </Component>
       </SubComponents>

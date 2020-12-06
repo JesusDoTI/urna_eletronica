@@ -3,7 +3,7 @@ package model.bean;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Voto {
+public class Voto implements Comparable<Eleitor>{
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
@@ -59,9 +59,15 @@ public class Voto {
     @Override
     public String toString() {
         if (candidato == null){
-            return eleitor.getNome() + "(" + eleitor.getRg() + ")" + " - " + sdf.format(dataHora) + " - Branco";
+            return sdf.format(dataHora) + " - Branco";
         }
-            return eleitor.getNome() + "(" + eleitor.getRg() + ")" + " - " + sdf.format(dataHora) + " - " + candidato.toString();
+            return sdf.format(dataHora) + " - " + candidato.toString();
+    }
+
+
+    @Override
+    public int compareTo(Eleitor o) {
+        return o.getRg().compareTo(this.getEleitor().getRg());
     }
 
 }

@@ -173,12 +173,15 @@ public final class VoteScreen extends javax.swing.JFrame {
 
     private void btnBrancoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrancoActionPerformed
         VotoDAO votoDAO = new VotoDAO();
-        votoDAO.votarBranco(eleitor.getRg());
+        votoDAO.whiteVote(eleitor.getCpf());
+        MainScreen ms = new MainScreen();
+        ms.setVisible(true);
+        dispose();
     }//GEN-LAST:event_btnBrancoActionPerformed
 
     private void btnConfirmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmaActionPerformed
         VotoDAO votoDAO = new VotoDAO();
-        votoDAO.votar(Integer.parseInt(txtCandidato.getText()), eleitor.getRg());
+        votoDAO.vote(Integer.parseInt(txtCandidato.getText()), eleitor.getCpf());
         MainScreen ms = new MainScreen();
         ms.setVisible(true);
         dispose();
@@ -186,20 +189,18 @@ public final class VoteScreen extends javax.swing.JFrame {
 
     private void txtCandidatoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCandidatoKeyReleased
         candidato = candidatoDAO.select(Integer.parseInt(txtCandidato.getText()));
-
+        lblChapa.setText("Chapa: " + candidato.getChapa());
         try {
-            InputStream is = imagemDAO.buscarImagem(candidato.getImagem().getCod());
-            byte[] imgByte = new byte[(int) candidato.getImagem().getTamanho()];
+            InputStream is = imagemDAO.selectImage(candidato.getImage().getCod());
+            byte[] imgByte = new byte[(int) candidato.getImage().getSize()];
             is.read(imgByte);
             ImageIcon image = new ImageIcon(imgByte);
             image.setImage(image.getImage().getScaledInstance(lblImagem.getWidth(), lblImagem.getHeight(), Image.SCALE_DEFAULT));
             lblImagem.setIcon(image);
             lblImagem.setAlignmentX(NORMAL);
             lblImagem.setAlignmentY(JLabel.CENTER);
-            lblChapa.setText("Chapa: " + candidato.getChapa());
-        } catch (IOException ex) {
-            lblImagem.setIcon(null);
-        } catch (NullPointerException ex) {
+
+        } catch (IOException | NullPointerException ex) {
             lblImagem.setIcon(null);
         }
     }//GEN-LAST:event_txtCandidatoKeyReleased

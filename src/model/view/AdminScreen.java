@@ -18,8 +18,8 @@ import model.dao.EleitorDAO;
  * @author Rafael
  */
 public class AdminScreen extends javax.swing.JFrame {
-
-    List<Candidato> candidatos = new CandidatoDAO().listar();
+    
+    List<Candidato> candidatos = new CandidatoDAO().list();
     List<Eleitor> eleitores = new EleitorDAO().list();
     CandidatoDAO candidatoDAO = new CandidatoDAO();
     Candidato candidato = new Candidato();
@@ -35,33 +35,34 @@ public class AdminScreen extends javax.swing.JFrame {
         createTableCandidato();
         createTableEleitor();
     }
-
+    
     public void initComplements() {
         this.setLocationRelativeTo(null);
     }
-
+    
     private void createTableCandidato() {
         DefaultTableModel dtmc = (DefaultTableModel) tbCandidato.getModel();
-        for (Candidato cndt : candidatos) {
+        candidatos.forEach((cndt) -> {
             dtmc.addRow(new Object[]{
                 cndt.getName(),
                 cndt.getNum(),
                 cndt.getChapa()
-
+            
             });
-        }
+        });
     }
-
+    
     private void createTableEleitor() {
         DefaultTableModel dtme = (DefaultTableModel) tbEleitor.getModel();
-        for (Eleitor elt : eleitores) {
+        eleitores.forEach((elt) -> {
             dtme.addRow(new Object[]{
-                elt.getNome(),
-                elt.getRg(),
+                elt.getName(),
+                elt.getCpf(),
                 elt.getMatricula()
-
+            
             });
-        }
+        });
+        
     }
 
     /**
@@ -91,7 +92,7 @@ public class AdminScreen extends javax.swing.JFrame {
         tbCandidato = new javax.swing.JTable();
         jScrollPane6 = new javax.swing.JScrollPane();
         tbEleitor = new javax.swing.JTable();
-        btnVoltar = new javax.swing.JButton();
+        btnComputar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         btnBack = new javax.swing.JButton();
@@ -206,7 +207,14 @@ public class AdminScreen extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tbCandidato.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tbCandidato.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbCandidato.getTableHeader().setReorderingAllowed(false);
+        tbCandidato.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbCandidatoMouseClicked(evt);
+            }
+        });
         jScrollPane5.setViewportView(tbCandidato);
         if (tbCandidato.getColumnModel().getColumnCount() > 0) {
             tbCandidato.getColumnModel().getColumn(0).setResizable(false);
@@ -219,7 +227,7 @@ public class AdminScreen extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Nome", "RG", "Matrícula"
+                "Nome", "CPF", "Matrícula"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -230,7 +238,14 @@ public class AdminScreen extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tbEleitor.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tbEleitor.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbEleitor.getTableHeader().setReorderingAllowed(false);
+        tbEleitor.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbEleitorMouseClicked(evt);
+            }
+        });
         jScrollPane6.setViewportView(tbEleitor);
         if (tbEleitor.getColumnModel().getColumnCount() > 0) {
             tbEleitor.getColumnModel().getColumn(0).setResizable(false);
@@ -239,11 +254,11 @@ public class AdminScreen extends javax.swing.JFrame {
             tbEleitor.getColumnModel().getColumn(2).setResizable(false);
         }
 
-        btnVoltar.setBackground(new java.awt.Color(255, 255, 255));
-        btnVoltar.setText("Computar Votos");
-        btnVoltar.addActionListener(new java.awt.event.ActionListener() {
+        btnComputar.setBackground(new java.awt.Color(255, 255, 255));
+        btnComputar.setText("Computar Votos");
+        btnComputar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnVoltarActionPerformed(evt);
+                btnComputarActionPerformed(evt);
             }
         });
 
@@ -289,7 +304,7 @@ public class AdminScreen extends javax.swing.JFrame {
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addGap(0, 0, Short.MAX_VALUE))))
-                    .addComponent(btnVoltar))
+                    .addComponent(btnComputar))
                 .addContainerGap())
             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -298,7 +313,7 @@ public class AdminScreen extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnVoltar)
+                .addComponent(btnComputar)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -354,33 +369,39 @@ public class AdminScreen extends javax.swing.JFrame {
 
     private void btnAlterCandidatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterCandidatoActionPerformed
         DefaultTableModel dtm = (DefaultTableModel) tbCandidato.getModel();
-        candidato = candidatoDAO.select((int) dtm.getValueAt(tbCandidato.getSelectedRow(), 1));
-        CandidatoScreen cs = new CandidatoScreen(candidato);
-        cs.setVisible(true);
-        dispose();
+        if (tbCandidato.getSelectedRow() == -1) {
+            JOptionPane.showMessageDialog(null, "Nenhum candidato selecionado", "Erro", JOptionPane.ERROR_MESSAGE);
+        } else {
+            candidato = candidatoDAO.select((int) dtm.getValueAt(tbCandidato.getSelectedRow(), 1));
+            CandidatoScreen cs = new CandidatoScreen(candidato);
+            cs.setVisible(true);
+            dispose();
+        }
     }//GEN-LAST:event_btnAlterCandidatoActionPerformed
 
     private void btnDelCandidatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDelCandidatoActionPerformed
         DefaultTableModel dtm = (DefaultTableModel) tbCandidato.getModel();
-        int resposta = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir?");
+        Object[] options = {"Sim", "Não"};
+        int resposta = JOptionPane.showOptionDialog(null, "Tem certeza que deseja excluir?", "Aviso", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         if (resposta == 0) {
             if (tbCandidato.getSelectedRow() == -1) {
                 JOptionPane.showMessageDialog(null, "Selecione um candidato para ser excluído");
             } else {
                 Object obj = dtm.getValueAt(tbCandidato.getSelectedRow(), 1);
                 int excluir = (int) obj;
-                candidatoDAO.excluir(excluir);
+                candidatoDAO.delete(excluir);
                 dtm.removeRow(tbCandidato.getSelectedRow());
             }
         } else {
-
+            
         }
     }//GEN-LAST:event_btnDelCandidatoActionPerformed
 
-    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
+    private void btnComputarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComputarActionPerformed
         AdminComputeVoteScreen acvs = new AdminComputeVoteScreen();
         acvs.setVisible(true);
-    }//GEN-LAST:event_btnVoltarActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnComputarActionPerformed
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
         MainScreen ms = new MainScreen();
@@ -390,18 +411,23 @@ public class AdminScreen extends javax.swing.JFrame {
 
     private void btnAlterEleitorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterEleitorActionPerformed
         DefaultTableModel dtm = (DefaultTableModel) tbEleitor.getModel();
-        eleitor = eleitorDAO.selectByRg(String.valueOf(dtm.getValueAt(tbEleitor.getSelectedRow(), 1)));
-        EleitorScreen es = new EleitorScreen(eleitor);
-        es.setVisible(true);
-        dispose();
+        if (tbEleitor.getSelectedRow() == -1) {
+            JOptionPane.showMessageDialog(null, "Nenhum eleitor selecionado", "Erro", JOptionPane.ERROR_MESSAGE);
+        } else {
+            eleitor = eleitorDAO.selectByCpf(String.valueOf(dtm.getValueAt(tbEleitor.getSelectedRow(), 1)));
+            EleitorScreen es = new EleitorScreen(eleitor);
+            es.setVisible(true);
+            dispose();
+        }
     }//GEN-LAST:event_btnAlterEleitorActionPerformed
 
     private void btnDelEleitorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDelEleitorActionPerformed
         DefaultTableModel dtm = (DefaultTableModel) tbEleitor.getModel();
-        int resposta = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir?");
+        Object[] options = {"Sim", "Não"};
+        int resposta = JOptionPane.showOptionDialog(null, "Tem certeza que deseja excluir?", "Aviso", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         if (resposta == 0) {
             if (tbEleitor.getSelectedRow() == -1) {
-                JOptionPane.showMessageDialog(null, "Selecione um candidato para ser excluído");
+                JOptionPane.showMessageDialog(null, "Selecione um eleitor para ser excluído");
             } else {
                 Object obj = dtm.getValueAt(tbEleitor.getSelectedRow(), 1);
                 String excluir = String.valueOf(obj);
@@ -409,9 +435,31 @@ public class AdminScreen extends javax.swing.JFrame {
                 dtm.removeRow(tbEleitor.getSelectedRow());
             }
         } else {
-
+            
         }
     }//GEN-LAST:event_btnDelEleitorActionPerformed
+
+    private void tbEleitorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbEleitorMouseClicked
+        tbEleitor.setRowSelectionAllowed(true);
+        if (tbCandidato.getSelectedRow() != -1) {
+            if (tbEleitor.getSelectedRow() != -1) {
+                tbCandidato.setRowSelectionAllowed(false);
+            } else {
+                tbCandidato.setRowSelectionAllowed(true);
+            }
+        }
+    }//GEN-LAST:event_tbEleitorMouseClicked
+
+    private void tbCandidatoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbCandidatoMouseClicked
+    tbCandidato.setRowSelectionAllowed(true);
+        if (tbEleitor.getSelectedRow() != -1) {
+            if (tbCandidato.getSelectedRow() != -1) {
+                tbEleitor.setRowSelectionAllowed(false);
+            } else {
+                tbEleitor.setRowSelectionAllowed(true);
+            }
+        }
+    }//GEN-LAST:event_tbCandidatoMouseClicked
 
     /**
      * @param args the command line arguments
@@ -454,9 +502,9 @@ public class AdminScreen extends javax.swing.JFrame {
     private javax.swing.JButton btnAlterCandidato;
     private javax.swing.JButton btnAlterEleitor;
     private javax.swing.JButton btnBack;
+    private javax.swing.JButton btnComputar;
     private javax.swing.JButton btnDelCandidato;
     private javax.swing.JButton btnDelEleitor;
-    private javax.swing.JButton btnVoltar;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

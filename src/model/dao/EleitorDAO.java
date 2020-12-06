@@ -13,77 +13,75 @@ import javax.swing.JOptionPane;
 
 import model.bean.Eleitor;
 import model.connection.ConnectionFactory;
-import model.connection.DBException;
 
 public class EleitorDAO {
 
-    private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     private static Connection conn = null;
-    private static PreparedStatement st = null;
+    private static PreparedStatement pstmt = null;
     private static ResultSet rs = null;
 
-    public void inserir(Eleitor eleitor) {
+    public void insert(Eleitor eleitor) {
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement(
+            pstmt = conn.prepareStatement(
                     "INSERT INTO eleitor (nome,dataNasc,telefone,endereco,rg,cpf,matricula,instituicao) "
                     + "VALUES (?,?,?,?,?,?,?,?)");
-            st.setString(1, eleitor.getNome());
-            st.setDate(2, (Date) eleitor.getDataNasc());
-            st.setString(3, eleitor.getTelefone());
-            st.setString(4, eleitor.getEndereco());
-            st.setString(5, eleitor.getRg());
-            st.setString(6, eleitor.getCpf());
-            st.setInt(7, eleitor.getMatricula());
-            st.setInt(8, eleitor.getInstituicao().getCod());
-            st.execute();
+            pstmt.setString(1, eleitor.getName());
+            pstmt.setDate(2, (Date) eleitor.getBirthDate());
+            pstmt.setString(3, eleitor.getPhone());
+            pstmt.setString(4, eleitor.getAddress());
+            pstmt.setString(5, eleitor.getRg());
+            pstmt.setString(6, eleitor.getCpf());
+            pstmt.setInt(7, eleitor.getMatricula());
+            pstmt.setInt(8, eleitor.getInstituicao().getCod());
+            pstmt.execute();
             JOptionPane.showMessageDialog(null, "Êxito ao efetuar cadastro");
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "RG e/ou CPF inválidos", "Erro", JOptionPane.ERROR_MESSAGE);
-            throw new DBException(e.getMessage());
-        }
+        } 
     }
 
-    public Eleitor selectByRg(String rg) {
+    public Eleitor selectByCpf(String cpf) {
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement(
-                    "SELECT * FROM eleitor WHERE rg = ?");
-            st.setString(1, rg);
-            rs = st.executeQuery();
+            pstmt = conn.prepareStatement(
+                    "SELECT * FROM eleitor WHERE cpf = ?");
+            pstmt.setString(1, cpf);
+            rs = pstmt.executeQuery();
             if (rs.next()) {
                 Eleitor e = new Eleitor();
                 e.setCod(rs.getInt("cod"));
-                e.setNome(rs.getString("nome"));
-                e.setDataNasc(rs.getDate("dataNasc"));
-                e.setTelefone(rs.getString("telefone"));
-                e.setEndereco(rs.getString("endereco"));
-                e.setRg(rg);
-                e.setCpf(rs.getString("cpf"));
+                e.setName(rs.getString("nome"));
+                e.setBirthDate(rs.getDate("dataNasc"));
+                e.setPhone(rs.getString("telefone"));
+                e.setAddress(rs.getString("endereco"));
+                e.setRg(rs.getString("rg"));
+                e.setCpf(cpf);
                 e.setMatricula(rs.getInt("matricula"));
                 e.setInstituicao(new InstituicaoDAO().select(rs.getInt("instituicao")));
                 return e;
             }
         } catch (SQLException e) {
-            throw new DBException(e.getMessage());
-        }
+            JOptionPane.showMessageDialog(null, "Erro inesperado", "Erro", JOptionPane.ERROR_MESSAGE);
+        } 
         return null;
     }
 
     public Eleitor selectByCod(Integer cod) {
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement(
+            pstmt = conn.prepareStatement(
                     "SELECT * FROM eleitor WHERE cod = ?");
-            st.setInt(1, cod);
-            rs = st.executeQuery();
+            pstmt.setInt(1, cod);
+            rs = pstmt.executeQuery();
             if (rs.next()) {
                 Eleitor e = new Eleitor();
                 e.setCod(cod);
-                e.setNome(rs.getString("nome"));
-                e.setDataNasc(rs.getDate("dataNasc"));
-                e.setTelefone(rs.getString("telefone"));
-                e.setEndereco(rs.getString("endereco"));
+                e.setName(rs.getString("nome"));
+                e.setBirthDate(rs.getDate("dataNasc"));
+                e.setPhone(rs.getString("telefone"));
+                e.setAddress(rs.getString("endereco"));
                 e.setRg(rs.getString("rg"));
                 e.setCpf(rs.getString("cpf"));
                 e.setMatricula(rs.getInt("matricula"));
@@ -91,15 +89,15 @@ public class EleitorDAO {
                 return e;
             }
         } catch (SQLException e) {
-            throw new DBException(e.getMessage());
-        }
+            JOptionPane.showMessageDialog(null, "Erro inesperado", "Erro", JOptionPane.ERROR_MESSAGE);
+        } 
         return null;
     }
 
-    public void update(Eleitor eleitor, String rg) {
+    public void update(Eleitor eleitor, String cpf) {
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement(
+            pstmt = conn.prepareStatement(
                     "UPDATE eleitor SET "
                     + "nome = ?, "
                     + "dataNasc = ?, "
@@ -108,37 +106,35 @@ public class EleitorDAO {
                     + "matricula = ?, "
                     + "instituicao = ? "
                     + "WHERE rg = ?");
-            st.setString(1, eleitor.getNome());
-            st.setDate(2, (Date) eleitor.getDataNasc());
-            st.setString(3, eleitor.getTelefone());
-            st.setString(4, eleitor.getEndereco());
-            st.setInt(5, eleitor.getMatricula());
-            st.setInt(6, eleitor.getInstituicao().getCod());
-            st.setString(7, rg);
-            st.execute();
+            pstmt.setString(1, eleitor.getName());
+            pstmt.setDate(2, (Date) eleitor.getBirthDate());
+            pstmt.setString(3, eleitor.getPhone());
+            pstmt.setString(4, eleitor.getAddress());
+            pstmt.setInt(5, eleitor.getMatricula());
+            pstmt.setInt(6, eleitor.getInstituicao().getCod());
+            pstmt.setString(7, cpf);
+            pstmt.execute();
             JOptionPane.showMessageDialog(null, "Êxito na alteração");
         } catch (SQLException e) {
-           JOptionPane.showMessageDialog(null, "RG e/ou CPF inválidos", "Erro", JOptionPane.ERROR_MESSAGE);
-           throw new DBException(e.getMessage());
-         
-        }
+            JOptionPane.showMessageDialog(null, "RG e/ou CPF inválidos", "Erro", JOptionPane.ERROR_MESSAGE);
+        } 
     }
 
     public List<Eleitor> list() {
         List<Eleitor> list = new ArrayList<>();
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement(
+            pstmt = conn.prepareStatement(
                     "SELECT * FROM eleitor ORDER BY nome ASC"
             );
-            rs = st.executeQuery();
+            rs = pstmt.executeQuery();
             while (rs.next()) {
                 Eleitor e = new Eleitor();
                 e.setCod(rs.getInt("cod"));
-                e.setNome(rs.getString("nome"));
-                e.setDataNasc(rs.getDate("dataNasc"));
-                e.setTelefone(rs.getString("telefone"));
-                e.setEndereco(rs.getString("endereco"));
+                e.setName(rs.getString("nome"));
+                e.setBirthDate(rs.getDate("dataNasc"));
+                e.setPhone(rs.getString("telefone"));
+                e.setAddress(rs.getString("endereco"));
                 e.setRg(rs.getString("rg"));
                 e.setCpf(rs.getString("cpf"));
                 e.setMatricula(rs.getInt("matricula"));
@@ -146,21 +142,21 @@ public class EleitorDAO {
                 list.add(e);
             }
         } catch (SQLException e) {
-            throw new DBException(e.getMessage());
-        }
+            JOptionPane.showMessageDialog(null, "Erro inesperado", "Erro", JOptionPane.ERROR_MESSAGE);
+        } 
         return list;
     }
-    
-    public void delete(String rg) {
+
+    public void delete(String cpf) {
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement(
+            pstmt = conn.prepareStatement(
                     "DELETE FROM eleitor "
-                    + "WHERE rg = ?");
-            st.setString(1, rg);
-            st.execute();
+                    + "WHERE cpf = ?");
+            pstmt.setString(1, cpf);
+            pstmt.execute();
         } catch (SQLException e) {
-            throw new DBException(e.getMessage());
-        }
+            JOptionPane.showMessageDialog(null, "Erro inesperado", "Erro", JOptionPane.ERROR_MESSAGE);
+        } 
     }
 }

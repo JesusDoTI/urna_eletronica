@@ -11,168 +11,168 @@ import javax.swing.JOptionPane;
 
 import model.bean.Candidato;
 import model.connection.ConnectionFactory;
-import model.connection.DBException;
 
 public class CandidatoDAO {
 
     public static Connection conn = null;
-    public static PreparedStatement st = null;
+    public static PreparedStatement pstmt = null;
     public static ResultSet rs = null;
 
-    public void inserir(Candidato candidato) {
+    public void insert(Candidato candidato) {
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement(
+            pstmt = conn.prepareStatement(
                     "INSERT INTO candidato (nome,num,chapa,imagem) "
                     + "VALUES (?,?,?,?)");
-            st.setString(1, candidato.getName());
-            st.setInt(2, candidato.getNum());
-            st.setString(3, candidato.getChapa());
-            st.setInt(4, candidato.getImagem().getCod());
-            st.execute();
+            pstmt.setString(1, candidato.getName());
+            pstmt.setInt(2, candidato.getNum());
+            pstmt.setString(3, candidato.getChapa());
+            pstmt.setInt(4, candidato.getImage().getCod());
+            pstmt.execute();
             JOptionPane.showMessageDialog(null, "Êxito ao efetuar o cadastro");
+
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Número de Candidato existente", "Erro", JOptionPane.ERROR_MESSAGE);
-            throw new DBException(e.getMessage());
-        }
+        } 
     }
-    
+
     public void insertWithoutImage(Candidato candidato) {
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement(
+            pstmt = conn.prepareStatement(
                     "INSERT INTO candidato (nome,num,chapa) "
                     + "VALUES (?,?,?)");
-            st.setString(1, candidato.getName());
-            st.setInt(2, candidato.getNum());
-            st.setString(3, candidato.getChapa());
-            st.execute();
+            pstmt.setString(1, candidato.getName());
+            pstmt.setInt(2, candidato.getNum());
+            pstmt.setString(3, candidato.getChapa());
+            pstmt.execute();
             JOptionPane.showMessageDialog(null, "Êxito ao efetuar o cadastro");
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Número de Candidato existente", "Erro", JOptionPane.ERROR_MESSAGE);
-            throw new DBException(e.getMessage());
-        }
+        } 
     }
-    
+
     public Candidato select(Integer num) {
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement(
+            pstmt = conn.prepareStatement(
                     "SELECT * FROM candidato WHERE num = ?");
-            st.setInt(1, num);
-            rs = st.executeQuery();
+            pstmt.setInt(1, num);
+            rs = pstmt.executeQuery();
             if (rs.next()) {
                 Candidato c = new Candidato();
                 c.setCod(rs.getInt("cod"));
                 c.setName(rs.getString("nome"));
                 c.setNum(num);
                 c.setChapa(rs.getString("chapa"));
-                c.setImagem(new ImagemDAO().buscar(rs.getInt("imagem")));
+                c.setImage(new ImagemDAO().select(rs.getInt("imagem")));
                 return c;
             }
+
         } catch (SQLException e) {
-            throw new DBException(e.getMessage());
-        }
+            JOptionPane.showMessageDialog(null, "Erro inesperado", "Erro", JOptionPane.ERROR_MESSAGE);
+        } 
         return null;
     }
 
     public Candidato selectByCod(Integer cod) {
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement(
+            pstmt = conn.prepareStatement(
                     "SELECT * FROM candidato WHERE cod = ?");
-            st.setInt(1, cod);
-            rs = st.executeQuery();
+            pstmt.setInt(1, cod);
+            rs = pstmt.executeQuery();
             if (rs.next()) {
                 Candidato c = new Candidato();
                 c.setCod(cod);
                 c.setName(rs.getString("nome"));
                 c.setNum(rs.getInt("num"));
                 c.setChapa(rs.getString("chapa"));
-                c.setImagem(new ImagemDAO().buscar(rs.getInt("imagem")));
+                c.setImage(new ImagemDAO().select(rs.getInt("imagem")));
                 return c;
             }
         } catch (SQLException e) {
-            throw new DBException(e.getMessage());
-        }
+            JOptionPane.showMessageDialog(null, "Erro inesperado", "Erro", JOptionPane.ERROR_MESSAGE);
+        } 
         return null;
     }
 
-    public List<Candidato> listar() {
+    public List<Candidato> list() {
         List<Candidato> list = new ArrayList<>();
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement(
+            pstmt = conn.prepareStatement(
                     "SELECT * FROM candidato ORDER BY nome ASC"
             );
-            rs = st.executeQuery();
-            while(rs.next()){
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
                 Candidato c = new Candidato();
                 c.setCod(rs.getInt("cod"));
                 c.setName(rs.getString("nome"));
                 c.setNum(rs.getInt("num"));
                 c.setChapa(rs.getString("chapa"));
-                c.setImagem(new ImagemDAO().buscar(rs.getInt("imagem")));
+                c.setImage(new ImagemDAO().select(rs.getInt("imagem")));
                 list.add(c);
+                return list;
             }
         } catch (SQLException e) {
-            throw new DBException(e.getMessage());
-        }
+            JOptionPane.showMessageDialog(null, "Erro inesperado", "Erro", JOptionPane.ERROR_MESSAGE);
+        } 
         return list;
     }
-    
-    public void excluir(int num) {
+
+    public void delete(int num) {
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement(
+            pstmt = conn.prepareStatement(
                     "DELETE FROM candidato "
                     + "WHERE num = ?");
-            st.setInt(1, num);
-            st.execute();
+            pstmt.setInt(1, num);
+            pstmt.execute();
         } catch (SQLException e) {
-            throw new DBException(e.getMessage());
-        }
+            JOptionPane.showMessageDialog(null, "Erro inesperado", "Erro", JOptionPane.ERROR_MESSAGE);
+        } 
     }
-    
+
     public void update(Candidato candidato, int cod) {
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement(
+            pstmt = conn.prepareStatement(
                     "UPDATE candidato SET "
-                            + "nome = ?, "
-                            + "num = ?, "
-                            + "chapa = ?, "
-                            + "imagem = ? "
+                    + "nome = ?, "
+                    + "num = ?, "
+                    + "chapa = ?, "
+                    + "imagem = ? "
                     + "WHERE cod = ?");
-            st.setString(1, candidato.getName());
-            st.setInt(2, candidato.getNum());
-            st.setString(3, candidato.getChapa());
-            st.setInt(4, candidato.getImagem().getCod());
-            st.setInt(5, cod);
-            st.execute();
+            pstmt.setString(1, candidato.getName());
+            pstmt.setInt(2, candidato.getNum());
+            pstmt.setString(3, candidato.getChapa());
+            pstmt.setInt(4, candidato.getImage().getCod());
+            pstmt.setInt(5, cod);
+            pstmt.execute();
             JOptionPane.showMessageDialog(null, "Êxito na alteração");
         } catch (SQLException e) {
-            throw new DBException(e.getMessage());
+            JOptionPane.showMessageDialog(null, "Erro inesperado", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    public void updateWithoutImage(Candidato candidato) {
+
+    public void updateWithoutImage(Candidato candidato, int cod) {
         try {
             conn = ConnectionFactory.getConnection();
-            st = conn.prepareStatement(
+            pstmt = conn.prepareStatement(
                     "UPDATE candidato SET "
-                            + "nome = ?, "
-                            + "num = ?, "
-                            + "chapa = ? "
+                    + "nome = ?, "
+                    + "num = ?, "
+                    + "chapa = ? "
                     + "WHERE cod = ?");
-            st.setString(1, candidato.getName());
-            st.setInt(2, candidato.getNum());
-            st.setString(3, candidato.getChapa());
-            st.setInt(4, candidato.getCod());
-            st.execute();
+            pstmt.setString(1, candidato.getName());
+            pstmt.setInt(2, candidato.getNum());
+            pstmt.setString(3, candidato.getChapa());
+            pstmt.setInt(4, cod);
+            pstmt.execute();
             JOptionPane.showMessageDialog(null, "Êxito na alteração");
         } catch (SQLException e) {
-            throw new DBException(e.getMessage());
+            JOptionPane.showMessageDialog(null, "Erro inesperado", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

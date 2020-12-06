@@ -5,15 +5,10 @@
  */
 package model.view;
 
-import java.awt.BorderLayout;
-import java.awt.Rectangle;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import model.bean.Candidato;
 import model.bean.Eleitor;
-import model.dao.CandidatoDAO;
 import model.dao.EleitorDAO;
+import model.dao.VotoDAO;
 
 /**
  *
@@ -23,6 +18,7 @@ public class MainScreen extends javax.swing.JFrame {
 
     Eleitor eleitor = new Eleitor();
     EleitorDAO eleitorDAO = new EleitorDAO();
+    VotoDAO votoDAO = new VotoDAO();
 
     public MainScreen() {
         initComponents();
@@ -47,7 +43,7 @@ public class MainScreen extends javax.swing.JFrame {
         btnEnter = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         btnAdmin = new javax.swing.JButton();
-        txtRg = new javax.swing.JPasswordField();
+        txtCpf = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -55,7 +51,7 @@ public class MainScreen extends javax.swing.JFrame {
         jpMain.setForeground(new java.awt.Color(255, 255, 255));
         jpMain.setToolTipText("");
 
-        lblRg.setText("Insira seu RG");
+        lblRg.setText("Insira seu CPF");
 
         btnEnter.setText("Enter");
         btnEnter.addActionListener(new java.awt.event.ActionListener() {
@@ -74,9 +70,9 @@ public class MainScreen extends javax.swing.JFrame {
             }
         });
 
-        txtRg.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtCpf.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtRgKeyTyped(evt);
+                txtCpfKeyTyped(evt);
             }
         });
 
@@ -95,7 +91,7 @@ public class MainScreen extends javax.swing.JFrame {
                         .addGroup(jpMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(lblRg)
                             .addComponent(btnEnter, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
-                            .addComponent(txtRg))
+                            .addComponent(txtCpf))
                         .addGap(151, 151, 151))))
             .addGroup(jpMainLayout.createSequentialGroup()
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 486, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -108,7 +104,7 @@ public class MainScreen extends javax.swing.JFrame {
                 .addGap(59, 59, 59)
                 .addComponent(lblRg, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtRg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtCpf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnEnter)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
@@ -132,19 +128,19 @@ public class MainScreen extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEnterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnterActionPerformed
-        verificateRg();
+        verificateCpf();
     }//GEN-LAST:event_btnEnterActionPerformed
 
     private void btnAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdminActionPerformed
         verificateAdmin();
     }//GEN-LAST:event_btnAdminActionPerformed
 
-    private void txtRgKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRgKeyTyped
+    private void txtCpfKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCpfKeyTyped
         String caracteres = "0987654321";
         if (!caracteres.contains(evt.getKeyChar() + "")) {
             evt.consume();
         }
-    }//GEN-LAST:event_txtRgKeyTyped
+    }//GEN-LAST:event_txtCpfKeyTyped
 
     private void verificateAdmin() {
         String login = JOptionPane.showInputDialog(null, "Login", "Admin Options", JOptionPane.QUESTION_MESSAGE);
@@ -164,17 +160,21 @@ public class MainScreen extends javax.swing.JFrame {
         }
     }
 
-    private void verificateRg() {
-        String rg = txtRg.getText();
-        if (rg.isEmpty()) {
+    private void verificateCpf() {
+        String cpf = txtCpf.getText();
+        if (cpf.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Preencha o campo vazio", "Erro", JOptionPane.ERROR_MESSAGE);
         } else {
-            if (eleitorDAO.selectByRg(rg) != null) {
-                eleitor = eleitorDAO.selectByRg(rg);
-                VoteScreen vs = new VoteScreen(eleitor);
-                vs.setSize(this.getWidth(), this.getHeight());
-                vs.setVisible(true);
-                this.dispose();
+            if (eleitorDAO.selectByCpf(cpf) != null) {
+                if (votoDAO.select(eleitorDAO.selectByCpf(txtCpf.getText()))) {
+                    JOptionPane.showMessageDialog(null, "Voto já efetuado", "Aviso", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    eleitor = eleitorDAO.selectByCpf(cpf);
+                    VoteScreen vs = new VoteScreen(eleitor);
+                    vs.setSize(this.getWidth(), this.getHeight());
+                    vs.setVisible(true);
+                    this.dispose();
+                }
             } else {
                 JOptionPane.showMessageDialog(null, "RG incorreto, digite novamente", "Erro", JOptionPane.ERROR_MESSAGE);
             }
@@ -223,6 +223,6 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jpMain;
     private javax.swing.JLabel lblRg;
-    private javax.swing.JPasswordField txtRg;
+    private javax.swing.JPasswordField txtCpf;
     // End of variables declaration//GEN-END:variables
 }

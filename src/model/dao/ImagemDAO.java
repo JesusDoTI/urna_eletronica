@@ -16,16 +16,17 @@ import model.bean.Imagem;
  */
 public class ImagemDAO {
 
-    public int inserir(Imagem img) {
-        Connection connection = null;
+    Connection connection = null;
+
+    public int insert(Imagem img) {
         Integer cod = 0;
         try {
             connection = ConnectionFactory.getConnection();
             PreparedStatement pstmt = connection
                     .prepareStatement("INSERT INTO imagem (tamanho, tipo, imagem) values (?,?,?)", Statement.RETURN_GENERATED_KEYS);
-            pstmt.setLong(1, img.getTamanho());
-            pstmt.setString(2, img.getTipo());
-            pstmt.setBlob(3, img.getImagem());
+            pstmt.setLong(1, img.getSize());
+            pstmt.setString(2, img.getExtension());
+            pstmt.setBlob(3, img.getImage());
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
@@ -33,14 +34,12 @@ public class ImagemDAO {
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Ocorreu um erro na inserção da imagem");
-            e.printStackTrace();
-        }
+        } 
         return cod;
     }
 
-    public Imagem buscar(int codigo) {
+    public Imagem select(int codigo) {
         Imagem img = new Imagem();
-        Connection connection = null;
         try {
             connection = ConnectionFactory.getConnection();
             PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM imagem "
@@ -49,21 +48,19 @@ public class ImagemDAO {
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 img.setCod(rs.getInt(1));
-                img.setTamanho(rs.getLong(2));
-                img.setTipo(rs.getString(3));
-                img.setImagem(rs.getBlob(4));
+                img.setSize(rs.getLong(2));
+                img.setExtension(rs.getString(3));
+                img.setImage(rs.getBlob(4));
             }
             return img;
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Ocorreu um erro na busca da imagem");
-            e.printStackTrace();
             return null;
-        }
+        } 
     }
 
-    public InputStream buscarImagem(int codigo) {
+    public InputStream selectImage(int codigo) {
         InputStream is = null;
-        Connection connection = null;
         try {
             connection = ConnectionFactory.getConnection();
             PreparedStatement pstmt = connection.prepareStatement("SELECT imagem FROM imagem "
@@ -75,8 +72,7 @@ public class ImagemDAO {
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Ocorreu um erro na busca da imagem");
-            e.printStackTrace();
-        }
+        } 
         return is;
     }
 }

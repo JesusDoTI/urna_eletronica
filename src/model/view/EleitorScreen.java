@@ -9,16 +9,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.text.MaskFormatter;
-import model.bean.Candidato;
 import model.bean.Eleitor;
 import model.bean.Instituicao;
-import model.dao.CandidatoDAO;
 import model.dao.EleitorDAO;
 import model.dao.InstituicaoDAO;
 
@@ -49,6 +44,7 @@ public class EleitorScreen extends javax.swing.JFrame {
         preencherCampos();
         txtRg.setEnabled(false);
         txtCpf.setEnabled(false);
+        txtData.setEnabled(false);
     }
 
     public void initComplements() {
@@ -281,9 +277,11 @@ public class EleitorScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_btnConfirmarActionPerformed
 
     private void cmbCampusItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbCampusItemStateChanged
+
         Instituicao i = (Instituicao) cmbCampus.getSelectedItem();
         int cod = i.getCod();
         instituicao.setCod(cod);
+
     }//GEN-LAST:event_cmbCampusItemStateChanged
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
@@ -345,7 +343,7 @@ public class EleitorScreen extends javax.swing.JFrame {
             Integer matricula = Integer.parseInt(txtMatricula.getText());
             Date data = sdf.parse(txtData.getText());
             eleitor = new Eleitor(nome, new java.sql.Date(data.getTime()), telefone, endereco, rg, cpf, matricula, instituicao);
-            eleitorDAO.inserir(eleitor);
+            eleitorDAO.insert(eleitor);
             eleitor = null;
         } catch (ParseException e) {
             e.printStackTrace();
@@ -367,12 +365,12 @@ public class EleitorScreen extends javax.swing.JFrame {
     }
 
     private void preencherCampos() {
-        txtNome.setText(eleitor.getNome());
-        txtData.setText(sdf.format(eleitor.getDataNasc()));
-        txtTelefone.setText(eleitor.getTelefone());
+        txtNome.setText(eleitor.getName());
+        txtData.setText(sdf.format(eleitor.getBirthDate()));
+        txtTelefone.setText(eleitor.getPhone());
         txtRg.setText(eleitor.getRg());
         txtCpf.setText(eleitor.getCpf());
-        txtEndereco.setText(eleitor.getEndereco());
+        txtEndereco.setText(eleitor.getAddress());
         txtMatricula.setText(String.valueOf(eleitor.getMatricula()));
 
         DefaultComboBoxModel cmb = criarComboBox();
@@ -389,15 +387,15 @@ public class EleitorScreen extends javax.swing.JFrame {
     }
 
     private DefaultComboBoxModel criarComboBox() {
-        List<Instituicao> campus = instituicaoDAO.listar();
+        List<Instituicao> campus = instituicaoDAO.list();
         DefaultComboBoxModel cmb = (DefaultComboBoxModel) cmbCampus.getModel();
         for (Instituicao inst : campus) {
             cmb.addElement(inst);
         }
         return cmb;
     }
-    
-    private void clean(){
+
+    private void clean() {
         txtNome.setText(null);
         txtRg.setText(null);
         txtCpf.setText(null);
@@ -405,7 +403,6 @@ public class EleitorScreen extends javax.swing.JFrame {
         txtMatricula.setText(null);
         txtTelefone.setText(null);
         txtData.setText(null);
-        cmbCampus.setSelectedIndex(0);
     }
 
     /**

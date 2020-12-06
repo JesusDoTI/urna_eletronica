@@ -2,56 +2,55 @@ package model.bean;
 
 public class Instituicao {
 
-	private Integer cod;
-	private String endereco;
-	private String telefone;
-	private String campus;
+    private Integer cod;
+    private String address;
+    private String phone;
+    private String campus;
 
-	public Instituicao() {
-	}
+    public Instituicao() {
+    }
 
-	public Instituicao(String endereco, String telefone, String campus) {
-		this.endereco = endereco;
-		this.telefone = telefone;
-		this.campus = campus;
-	}
+    public Instituicao(String address, String phone, String campus) {
+        this.address = address;
+        this.phone = phone;
+        this.campus = campus;
+    }
 
-	public Integer getCod() {
-		return cod;
-	}
-	
-	public void setCod(Integer cod) {
-		this.cod = cod;
-	}
-	
-	public String getEndereco() {
-		return endereco;
-	}
+    public Integer getCod() {
+        return cod;
+    }
 
-	public void setEndereco(String endereco) {
-		this.endereco = endereco;
-	}
+    public void setCod(Integer cod) {
+        this.cod = cod;
+    }
 
-	public String getTelefone() {
-		return telefone;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public void setTelefone(String telefone) {
-		this.telefone = telefone;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public String getCampus() {
-		return campus;
-	}
+    public String getPhone() {
+        return phone;
+    }
 
-	public void setCampus(String campus) {
-		this.campus = campus;
-	}
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-	@Override
-	public String toString() {
-		return campus;
-	}
-	
-	
+    public String getCampus() {
+        return campus;
+    }
+
+    public void setCampus(String campus) {
+        this.campus = campus;
+    }
+
+    @Override
+    public String toString() {
+        return campus;
+    }
+
 }

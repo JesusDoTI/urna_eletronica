@@ -14,14 +14,14 @@ import java.sql.Blob;
 public class Imagem {
 
     private int cod;
-    private long tamanho;
-    private String tipo;
-    private Blob imagem;
+    private long size;
+    private String extension;
+    private Blob image;
 
-    public Imagem(long tamanho, String tipo, Blob imagem) {
-        this.tamanho = tamanho;
-        this.tipo = tipo;
-        this.imagem = imagem;
+    public Imagem(long size, String extension, Blob image) {
+        this.size = size;
+        this.extension = extension;
+        this.image = image;
     }
 
     public Imagem() {
@@ -35,28 +35,28 @@ public class Imagem {
         this.cod = cod;
     }
 
-    public long getTamanho() {
-        return tamanho;
+    public long getSize() {
+        return size;
     }
 
-    public void setTamanho(long tamanho) {
-        this.tamanho = tamanho;
+    public void setSize(long size) {
+        this.size = size;
     }
 
-    public String getTipo() {
-        return tipo;
+    public String getExtension() {
+        return extension;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setExtension(String extension) {
+        this.extension = extension;
     }
 
-    public Blob getImagem() {
-        return imagem;
+    public Blob getImage() {
+        return image;
     }
 
-    public void setImagem(Blob imagem) {
-        this.imagem = imagem;
+    public void setImage(Blob image) {
+        this.image = image;
     }
 
 }
